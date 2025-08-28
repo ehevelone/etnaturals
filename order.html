@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout — ET Naturals</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    .wrap { max-width:720px; margin:32px auto; padding:20px; }
+    a { color:var(--accent); text-decoration:none; }
+    .card { background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+    .row { display:grid; grid-template-columns:1fr; gap:18px; }
+    label { display:flex; flex-direction:column; gap:6px; font-size:14px; }
+    select, input[type="number"] { background:#0f1012; border:1px solid var(--stroke); color:var(--text); padding:10px 12px; border-radius:10px; font-size:15px; }
+    .totals { font-size:15px; color:var(--muted); }
+    .paygrid { display:grid; gap:12px; margin-top:6px; }
+    .payimg { display:block; width:100%; max-width:360px; height:auto; border-radius:12px; border:1px solid var(--stroke); box-shadow:0 2px 8px rgba(0,0,0,.25); }
+    .paygrid a:focus-visible img, .paygrid a:hover img { outline:2px solid var(--accent); outline-offset:3px; }
+    header { margin-bottom:12px; }
+    .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#151618; color:#f6f7f9; border:1px solid var(--stroke); padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35); font-size:14px; display:none; z-index:9999; }
+    @media (max-width:640px){ .wrap{ padding:16px; } }
+
+  /* Compact payment button images */
+  .paygrid {
+    display: grid;
+    grid-template-columns: repeat(2, auto);  /* side-by-side */
+    gap: 12px;
+    justify-content: center;
+    justify-items: center;
+  }
+  .payimg {
+    width: 200px;          /* tweak to 180–240px if you want */
+    max-width: 200px;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid #2a2d31;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  @media (max-width: 520px) {
+    .paygrid { grid-template-columns: 1fr; } /* stack on small screens */
+    .payimg  { width: 180px; max-width: 180px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a href="/">← Back</a></header>
+
+    <div class="card">
+      <h1 style="margin:0 0 10px 0;">Checkout</h1>
+
+      <div class="row">
+        <!-- Minimal controls -->
+        <label>
+          Plan
+          <select id="plan">
+            <option value="onetime">One-Time — $19.99</option>
+            <option value="subscribe">Subscription — $14.99</option>
+            <option value="bundle">Bundle (3-Pack) — $54.99</option>
+          </select>
+        </label>
+
+        <label>
+          Quantity
+          <input id="qty" type="number" min="1" value="1" />
+        </label>
+
+        <div class="totals" id="totals">Total: $19.99</div>
+
+        <!-- Payment: image links only -->
+        <div class="paygrid">
+          <a href="#" id="lnkPaypal" aria-label="Pay with PayPal">
+            <img class="payimg" src="images/paypal_link.jpg" alt="Pay with PayPal"
+                 onerror="this.onerror=null; this.src='paypal_link.jpg';">
+          </a>
+
+          <a href="#" id="lnkVenmo" aria-label="Pay with Venmo">
+            <img class="payimg" src="images/venmo.png" alt="Pay with Venmo"
+                 onerror="this.onerror=null; this.src='venmo.png';">
+          </a>
+        </div>
+      </div>
+
+      <p class="totals" style="margin-top:10px;">Taxes & shipping calculated in payment app.</p>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Coming soon.</div>
+
+  <script>
+  (function(){
+    // === CONFIG ===
+    const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+    const STORE_NAME = 'ET Naturals';
+    const VENMO_HANDLE = 'YOUR_HANDLE';     // <- set your Venmo @handle (without @)
+    const PAYPAL_URL   = '';                // <- put your PayPal link (paypal.me/you/amount OR Checkout URL). Leave blank to keep as placeholder.
+
+    // Elements
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const totEl  = document.getElementById('totals');
+    const venmoA = document.getElementById('lnkVenmo');
+    const paypalA= document.getElementById('lnkPaypal');
+    const toast  = document.getElementById('toast');
+
+    // Helpers
+    function showToast(msg){ if(!toast) return; toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none', 2000); }
+    function planLabel(p){ return p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time'); }
+    function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
+
+    function parseQueryPlan(){
+      const p = new URLSearchParams(location.search).get('plan');
+      if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
+    }
+
+    function calc(){
+      const plan = planEl.value || 'onetime';
+      const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
+      const unit = PRICES[plan] ?? PRICES.onetime;
+      const total = +(unit * qty).toFixed(2); // qty = number of bundles for bundle plan
+      return { plan, qty, unit, total };
+    }
+
+    function updateTotals(){
+      const { total, qty, unit } = calc();
+      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})`;
+      updateLinks();
+    }
+
+    function updateLinks(){
+      const { plan, qty, total } = calc();
+      // PayPal: static link or placeholder
+      if (PAYPAL_URL) {
+        // If you use paypal.me, you can append amount like: https://paypal.me/YourName/19.99
+        // If PAYPAL_URL already includes amount handling, leave as-is.
+        paypalA.href = PAYPAL_URL;
+      } else {
+        paypalA.href = '#';
+      }
+
+      // Venmo: deep link (mobile) or web fallback (desktop)
+      const label = `${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`;
+      const amount = total.toFixed(2);
+      const note = encodeURIComponent(label);
+      if (VENMO_HANDLE && VENMO_HANDLE !== 'YOUR_HANDLE') {
+        const deep = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`;
+        const web  = `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
+        venmoA.href = isMobile() ? deep : web;
+      } else {
+        venmoA.href = '#';
+      }
+    }
+
+    // Guard clicks if not configured
+    paypalA.addEventListener('click', e => {
+      if (!PAYPAL_URL) { e.preventDefault(); showToast('Add your PayPal link to enable this.'); }
+    });
+    venmoA.addEventListener('click', e => {
+      if (!VENMO_HANDLE || VENMO_HANDLE === 'YOUR_HANDLE') { e.preventDefault(); showToast('Set your Venmo handle to enable this.'); }
+    });
+
+    // Init
+    parseQueryPlan();
+    updateTotals();
+    planEl.addEventListener('change', updateTotals);
+    qtyEl.addEventListener('input', updateTotals);
+  })();
+  </script>
+</body>
+</html>

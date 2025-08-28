@@ -6,52 +6,52 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
-    * { box-sizing: border-box; }
+    * { box-sizing:border-box; }
     body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
     .wrap { max-width:720px; margin:32px auto; padding:20px; }
     a { color:var(--accent); text-decoration:none; }
+    header { margin-bottom:12px; }
     .card { background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
     .row { display:grid; grid-template-columns:1fr; gap:18px; }
     label { display:flex; flex-direction:column; gap:6px; font-size:14px; }
-    select, input[type="number"] { background:#0f1012; border:1px solid var(--stroke); color:var(--text); padding:10px 12px; border-radius:10px; font-size:15px; }
+    select, input[type="number"] {
+      background:#0f1012; border:1px solid var(--stroke); color:var(--text);
+      padding:10px 12px; border-radius:10px; font-size:15px;
+    }
     .totals { font-size:15px; color:var(--muted); }
-    .paygrid { display:grid; gap:12px; margin-top:6px; }
-    .payimg { display:block; width:100%; max-width:360px; height:auto; border-radius:12px; border:1px solid var(--stroke); box-shadow:0 2px 8px rgba(0,0,0,.25); }
+
+    /* Payment row layout — let PayPal choose its natural width */
+    .paygrid{
+      display:flex;
+      gap:16px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+      margin-top:6px;
+    }
+    /* Ensure the hosted button isn’t squeezed */
+    #paypal-container{
+      flex:0 1 320px;
+      min-width:320px;
+    }
+    /* Venmo image */
+    .payimg{
+      width:200px; max-width:200px; height:auto;
+      border-radius:12px; border:1px solid #2a2d31; box-shadow:0 2px 8px rgba(0,0,0,.25);
+      display:block;
+    }
     .paygrid a:focus-visible img, .paygrid a:hover img { outline:2px solid var(--accent); outline-offset:3px; }
-    header { margin-bottom:12px; }
-    .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#151618; color:#f6f7f9; border:1px solid var(--stroke); padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35); font-size:14px; display:none; z-index:9999; }
-    @media (max-width:640px){ .wrap{ padding:16px; } }
+    @media (max-width:520px){
+      #paypal-container{ min-width:260px; }
+      .payimg{ width:180px; max-width:180px; }
+    }
 
-    /* Compact payment button images */
-   /* Payment row layout — let PayPal choose its natural width */
-.paygrid{
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-  align-items:center;
-  justify-content:center;
-}
-
-/* Ensure the hosted button isn’t squeezed */
-#paypal-container{
-  flex:0 1 320px;      /* allow shrink/grow but keep reasonable width */
-  min-width:320px;     /* prevents vertical letter wrapping */
-}
-
-/* Keep your Venmo image sizing */
-.payimg{
-  width:200px;
-  max-width:200px;
-  height:auto;
-  border-radius:12px;
-  border:1px solid #2a2d31;
-  box-shadow:0 2px 8px rgba(0,0,0,.25);
-}
-@media (max-width:520px){
-  #paypal-container{ min-width:260px; }
-  .payimg{ width:180px; max-width:180px; }
-}
-
+    .toast {
+      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+      background:#151618; color:#f6f7f9; border:1px solid var(--stroke);
+      padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+      font-size:14px; display:none; z-index:9999;
+    }
   </style>
 </head>
 <body>
@@ -62,7 +62,6 @@
       <h1 style="margin:0 0 10px 0;">Checkout</h1>
 
       <div class="row">
-        <!-- Minimal controls -->
         <label>
           Plan
           <select id="plan">
@@ -79,12 +78,12 @@
 
         <div class="totals" id="totals">Total: $19.99</div>
 
-        <!-- Payments -->
+        <!-- Payment row -->
         <div class="paygrid">
           <!-- PayPal Hosted Button renders here -->
           <div id="paypal-container"></div>
 
-          <!-- Venmo image/link (kept as-is) -->
+          <!-- Venmo image/link -->
           <a href="#" id="lnkVenmo" aria-label="Pay with Venmo">
             <img class="payimg" src="images/venmo.png" alt="Pay with Venmo"
                  onerror="this.onerror=null; this.src='venmo.png';">
@@ -98,44 +97,49 @@
 
   <div class="toast" id="toast">Coming soon.</div>
 
-  <!-- Your logic + Venmo links -->
+  <!-- PayPal SDK (Hosted Buttons only — we removed enable-funding=venmo to avoid duplicates) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
+
+  <!-- App logic -->
   <script>
   (function(){
     // === CONFIG ===
     const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
     const STORE_NAME = 'ET Naturals';
-    const VENMO_HANDLE = 'YOUR_VENMO_HANDLE'; // <- set your Venmo @handle (without @)
+    const VENMO_HANDLE = 'YOUR_VENMO_HANDLE'; // <- set your Venmo username (no @)
+
+    // Your PayPal Hosted Button IDs:
+    const BUTTON_IDS = {
+      subscribe: 'PASTE_SUBSCRIBE_BUTTON_ID', // 🔁 replace with your $14.99 subscription hosted button id
+      onetime:   '6EXMRWBD9LCTQ',            // ✅ your $19.99 single-bottle hosted button
+      bundle:    'PASTE_BUNDLE_BUTTON_ID'     // 🔁 replace with your $54.99 hosted button id
+    };
 
     // Elements
     const planEl = document.getElementById('plan');
     const qtyEl  = document.getElementById('qty');
     const totEl  = document.getElementById('totals');
     const venmoA = document.getElementById('lnkVenmo');
-    const toast  = document.getElementById('toast');
 
     // Helpers
-    function showToast(msg){ if(!toast) return; toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none', 2000); }
-    function planLabel(p){ return p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time'); }
-    function isMobile(){ return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent); }
-
+    const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const planLabel = (p) => p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time');
     function parseQueryPlan(){
       const p = new URLSearchParams(location.search).get('plan');
       if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
     }
-
     function calc(){
       const plan = planEl.value || 'onetime';
       const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
       const unit = PRICES[plan] ?? PRICES.onetime;
-      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2); // qty applies to onetime/bundle; subs billed by PayPal plan
+      // PayPal hosted buttons use the amount defined in PayPal; qty here is for Venmo + display
+      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
       return { plan, qty, unit, total };
     }
 
     function updateTotals(){
       const { total, qty, unit, plan } = calc();
       totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
-      updateVenmo();
-      renderPayPal();
     }
 
     function updateVenmo(){
@@ -152,38 +156,28 @@
       }
     }
 
-    // PayPal Hosted Buttons: pick button by plan and render
+    // PayPal Hosted Button render (by plan)
     function renderPayPal(){
       const container = document.getElementById('paypal-container');
       if (!container || typeof paypal === 'undefined' || !paypal.HostedButtons) return;
 
-      const BUTTON_IDS = {
-        subscribe: 'PASTE_SUBSCRIBE_BUTTON_ID', // 🔁 replace with your subscription hosted button id
-        onetime:   '6EXMRWBD9LCTQ',            // ✅ your $19.99 single-bottle hosted button
-        bundle:    'PASTE_BUNDLE_BUTTON_ID'     // 🔁 replace with your $54.99 hosted button id
-      };
-
       const { plan } = calc();
       const hostedButtonId = BUTTON_IDS[plan] || BUTTON_IDS.onetime;
 
-      container.innerHTML = ''; // clear previous render
+      container.innerHTML = ''; // clear any previous render
       paypal.HostedButtons({ hostedButtonId }).render('#paypal-container');
     }
 
     // Init
     parseQueryPlan();
     updateTotals();
-    planEl.addEventListener('change', updateTotals);
-    qtyEl.addEventListener('input', updateTotals);
+    updateVenmo();
+    renderPayPal();
 
-    // Guard Venmo click if not configured
-    venmoA.addEventListener('click', e => {
-      if (!VENMO_HANDLE || VENMO_HANDLE === 'YOUR_VENMO_HANDLE') { e.preventDefault(); showToast('Set your Venmo handle to enable this.'); }
-    });
+    // Events
+    planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
+    qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
   })();
   </script>
-
-  <!-- PayPal SDK (hosted buttons + Venmo funding) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
 </body>
 </html>

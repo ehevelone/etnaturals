@@ -7,19 +7,16 @@
   <meta name="description" content="ET Naturals Root Renewal — small-batch herbal hair & scalp treatment with Castor, Batana, Rosemary, and Clove oils. Nourish roots, support healthy hair, and simplify care with subscription." />
   <meta name="theme-color" content="#215033" />
 
-  <!-- Favicon (relative paths so they work locally and on Netlify) -->
+  <!-- Favicons (relative so they work locally & on Netlify) -->
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="icon" type="image/png" href="images/favicon.png?v=2" sizes="32x32">
 
-  <!-- Open Graph (Facebook, LinkedIn, etc.) -->
+  <!-- Social (absolute URLs are fine) -->
   <meta property="og:type" content="product">
   <meta property="og:title" content="ET Naturals — Root Renewal">
   <meta property="og:description" content="Small-batch herbal hair & scalp treatment with castor, batana, rosemary, and clove oils. Subscribe $14.99 or buy once $19.99.">
-  <!-- Absolute URLs are recommended for social crawlers; safe to keep -->
   <meta property="og:image" content="https://www.etnaturals.com/images/root-renewal-hero.jpg">
   <meta property="og:url" content="https://www.etnaturals.com/">
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ET Naturals — Root Renewal">
   <meta name="twitter:description" content="Small-batch herbal hair & scalp treatment.">
@@ -75,9 +72,7 @@
       <!-- Logo -->
       <div class="brand">
         <a href="index.html" class="logo">
-          <img src="images/et-naturals-logo.svg"
-               alt="ET Naturals Logo"
-               style="height:60px;width:auto;">
+          <img src="images/et-naturals-logo.svg" alt="ET Naturals Logo" style="height:60px;width:auto;">
         </a>
       </div>
 
@@ -105,19 +100,15 @@
         <p class="muted" style="margin-top:10px;font-size:13px">Cosmetic product. No drug claims. Results vary.</p>
       </div>
 
-      <picture>
-        <!-- Modern browsers will load WebP if available -->
-        <source srcset="images/root-renewal-hero.webp" type="image/webp">
-        <!-- Fallback JPG -->
-        <img
-          src="images/root-renewal-hero.jpg"
-          alt="ET Naturals Root Renewal — 4 oz herbal hair & scalp oil in cobalt blue glass dropper bottle"
-          width="1600"
-          height="1200"
-          loading="eager"
-          fetchpriority="high"
-          style="width:100%;height:auto;border-radius:16px; border:1px solid #0002; box-shadow:0 10px 30px rgba(0,0,0,.08)">
-      </picture>
+      <!-- Simplified (JPG only, since no WebP in your images folder) -->
+      <img
+        src="images/root-renewal-hero.jpg"
+        alt="ET Naturals Root Renewal — 4 oz herbal hair & scalp oil in cobalt blue glass dropper bottle"
+        width="1600"
+        height="1200"
+        loading="eager"
+        fetchpriority="high"
+        style="width:100%;height:auto;border-radius:16px; border:1px solid #0002; box-shadow:0 10px 30px rgba(0,0,0,.08)">
     </section>
 
     <section id="benefits" class="container">
@@ -176,6 +167,18 @@
       </div>
       <p class="muted" style="margin-top:10px;font-size:13px">Prices shown are MSRP; taxes & shipping calculated at checkout.</p>
     </section>
+
+    <!-- TEMP: Image Path Test (remove after verifying) -->
+    <section class="container card pad" style="margin-top:20px">
+      <h3>Image Path Test</h3>
+      <p>Logo SVG:</p>
+      <img src="images/et-naturals-logo.svg" alt="Logo test" style="height:40px">
+      <p>Hero JPG:</p>
+      <img src="images/root-renewal-hero.jpg" alt="Hero JPG test" width="400">
+      <p>Favicon PNG:</p>
+      <img src="images/favicon.png" alt="Favicon test" width="64" height="64">
+    </section>
+    <!-- /TEMP -->
   </main>
 
   <footer>

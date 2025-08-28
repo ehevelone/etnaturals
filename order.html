@@ -22,27 +22,27 @@
     .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#151618; color:#f6f7f9; border:1px solid var(--stroke); padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35); font-size:14px; display:none; z-index:9999; }
     @media (max-width:640px){ .wrap{ padding:16px; } }
 
-  /* Compact payment button images */
-  .paygrid {
-    display: grid;
-    grid-template-columns: repeat(2, auto);  /* side-by-side */
-    gap: 12px;
-    justify-content: center;
-    justify-items: center;
-  }
-  .payimg {
-    width: 200px;          /* tweak to 180–240px if you want */
-    max-width: 200px;
-    height: auto;
-    border-radius: 12px;
-    border: 1px solid #2a2d31;
-    box-shadow: 0 2px 8px rgba(0,0,0,.25);
-  }
-  @media (max-width: 520px) {
-    .paygrid { grid-template-columns: 1fr; } /* stack on small screens */
-    .payimg  { width: 180px; max-width: 180px; }
-  }
-</style>
+    /* Compact payment button images */
+    .paygrid {
+      display: grid;
+      grid-template-columns: repeat(2, auto);  /* side-by-side */
+      gap: 12px;
+      justify-content: center;
+      justify-items: center;
+    }
+    .payimg {
+      width: 200px;          /* tweak to 180–240px if you want */
+      max-width: 200px;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid #2a2d31;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    @media (max-width: 520px) {
+      .paygrid { grid-template-columns: 1fr; } /* stack on small screens */
+      .payimg  { width: 180px; max-width: 180px; }
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -69,13 +69,12 @@
 
         <div class="totals" id="totals">Total: $19.99</div>
 
-        <!-- Payment: image links only -->
+        <!-- Payments -->
         <div class="paygrid">
-          <a href="#" id="lnkPaypal" aria-label="Pay with PayPal">
-            <img class="payimg" src="images/paypal_link.jpg" alt="Pay with PayPal"
-                 onerror="this.onerror=null; this.src='paypal_link.jpg';">
-          </a>
+          <!-- PayPal Hosted Button renders here -->
+          <div id="paypal-container"></div>
 
+          <!-- Venmo image/link (kept as-is) -->
           <a href="#" id="lnkVenmo" aria-label="Pay with Venmo">
             <img class="payimg" src="images/venmo.png" alt="Pay with Venmo"
                  onerror="this.onerror=null; this.src='venmo.png';">
@@ -83,26 +82,25 @@
         </div>
       </div>
 
-      <p class="totals" style="margin-top:10px;">Taxes & shipping calculated in payment app.</p>
+      <p class="totals" style="margin-top:10px;">Taxes &amp; shipping calculated in payment app.</p>
     </div>
   </div>
 
   <div class="toast" id="toast">Coming soon.</div>
 
+  <!-- Your logic + Venmo links -->
   <script>
   (function(){
     // === CONFIG ===
     const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
     const STORE_NAME = 'ET Naturals';
-    const VENMO_HANDLE = 'YOUR_HANDLE';     // <- set your Venmo @handle (without @)
-    const PAYPAL_URL   = '';                // <- put your PayPal link (paypal.me/you/amount OR Checkout URL). Leave blank to keep as placeholder.
+    const VENMO_HANDLE = 'YOUR_VENMO_HANDLE'; // <- set your Venmo @handle (without @)
 
     // Elements
     const planEl = document.getElementById('plan');
     const qtyEl  = document.getElementById('qty');
     const totEl  = document.getElementById('totals');
     const venmoA = document.getElementById('lnkVenmo');
-    const paypalA= document.getElementById('lnkPaypal');
     const toast  = document.getElementById('toast');
 
     // Helpers
@@ -119,32 +117,23 @@
       const plan = planEl.value || 'onetime';
       const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
       const unit = PRICES[plan] ?? PRICES.onetime;
-      const total = +(unit * qty).toFixed(2); // qty = number of bundles for bundle plan
+      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2); // qty applies to onetime/bundle; subs billed by PayPal plan
       return { plan, qty, unit, total };
     }
 
     function updateTotals(){
-      const { total, qty, unit } = calc();
-      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})`;
-      updateLinks();
+      const { total, qty, unit, plan } = calc();
+      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
+      updateVenmo();
+      renderPayPal();
     }
 
-    function updateLinks(){
+    function updateVenmo(){
       const { plan, qty, total } = calc();
-      // PayPal: static link or placeholder
-      if (PAYPAL_URL) {
-        // If you use paypal.me, you can append amount like: https://paypal.me/YourName/19.99
-        // If PAYPAL_URL already includes amount handling, leave as-is.
-        paypalA.href = PAYPAL_URL;
-      } else {
-        paypalA.href = '#';
-      }
-
-      // Venmo: deep link (mobile) or web fallback (desktop)
       const label = `${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`;
       const amount = total.toFixed(2);
       const note = encodeURIComponent(label);
-      if (VENMO_HANDLE && VENMO_HANDLE !== 'YOUR_HANDLE') {
+      if (VENMO_HANDLE && VENMO_HANDLE !== 'YOUR_VENMO_HANDLE') {
         const deep = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`;
         const web  = `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
         venmoA.href = isMobile() ? deep : web;
@@ -153,20 +142,38 @@
       }
     }
 
-    // Guard clicks if not configured
-    paypalA.addEventListener('click', e => {
-      if (!PAYPAL_URL) { e.preventDefault(); showToast('Add your PayPal link to enable this.'); }
-    });
-    venmoA.addEventListener('click', e => {
-      if (!VENMO_HANDLE || VENMO_HANDLE === 'YOUR_HANDLE') { e.preventDefault(); showToast('Set your Venmo handle to enable this.'); }
-    });
+    // PayPal Hosted Buttons: pick button by plan and render
+    function renderPayPal(){
+      const container = document.getElementById('paypal-container');
+      if (!container || typeof paypal === 'undefined' || !paypal.HostedButtons) return;
+
+      const BUTTON_IDS = {
+        subscribe: 'PASTE_SUBSCRIBE_BUTTON_ID', // 🔁 replace with your subscription hosted button id
+        onetime:   '6EXMRWBD9LCTQ',            // ✅ your $19.99 single-bottle hosted button
+        bundle:    'PASTE_BUNDLE_BUTTON_ID'     // 🔁 replace with your $54.99 hosted button id
+      };
+
+      const { plan } = calc();
+      const hostedButtonId = BUTTON_IDS[plan] || BUTTON_IDS.onetime;
+
+      container.innerHTML = ''; // clear previous render
+      paypal.HostedButtons({ hostedButtonId }).render('#paypal-container');
+    }
 
     // Init
     parseQueryPlan();
     updateTotals();
     planEl.addEventListener('change', updateTotals);
     qtyEl.addEventListener('input', updateTotals);
+
+    // Guard Venmo click if not configured
+    venmoA.addEventListener('click', e => {
+      if (!VENMO_HANDLE || VENMO_HANDLE === 'YOUR_VENMO_HANDLE') { e.preventDefault(); showToast('Set your Venmo handle to enable this.'); }
+    });
   })();
   </script>
+
+  <!-- PayPal SDK (hosted buttons + Venmo funding) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&enable-funding=venmo&currency=USD"></script>
 </body>
 </html>

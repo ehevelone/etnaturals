@@ -67,6 +67,13 @@
     .hero-img {width: 100%; height: auto; display: block; border-radius: 16px; border: 1px solid #0002; box-shadow: 0 10px 30px rgba(0,0,0,.08);
 }
 
+.logo-img{
+  display:block;
+  height:60px;
+  width:auto;
+}
+
+
   </style>
 </head>
 
@@ -75,9 +82,14 @@
     <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
       <!-- Logo -->
       <div class="brand">
-        <a href="index.html" class="logo">
-          <link rel="icon" type="image/png" href="images/favicon_sm.png"  alt="ET Naturals Logo">
+       <a href="index.html" class="logo">
+        <img
+          src="images/et-naturals-logo.png"
+          alt="ET Naturals Logo"
+          class="logo-img"
+          onerror="this.onerror=null;this.src='images/logo.png'">
         </a>
+
       </div>
 
       <!-- Navigation -->

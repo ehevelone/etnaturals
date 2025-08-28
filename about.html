@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Us — ET Naturals | Root Renewal</title>
+  <meta name="description" content="Learn about ET Naturals — our story, mission, process, and what makes Root Renewal different." />
+  <meta name="theme-color" content="#215033" />
+
+  <link rel="icon" type="image/png" href="images/favicon_sm.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{--green:#215033;--brown:#6b4b3e;--ink:#0e1a14;--beige:#F0E9DA}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--beige);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;line-height:1.55}
+    a{color:var(--green);text-decoration:none}
+    header{position:sticky;top:0;background:rgba(240,233,218,.9);backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid #0002;z-index:20}
+    .container{max-width:1100px;margin:auto;padding:20px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo-img{display:block;height:60px;width:auto}
+    nav{display:flex;gap:18px;align-items:center}
+    nav a{font-weight:600}
+
+    .hero{display:grid;gap:26px;padding:56px 20px}
+    @media(min-width:900px){.hero{grid-template-columns:1.05fr .95fr;align-items:center}}
+    .title{font-family:"Playfair Display",serif;font-size:clamp(28px,4vw,46px);line-height:1.1;margin:0}
+    .subtitle{margin:8px 0 16px;color:var(--brown);font-weight:600}
+    .card{background:rgba(255,255,255,.65);border:1px solid #0002;border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.08)}
+    .pad{padding:24px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:900px){.grid.cols-2{grid-template-columns:repeat(2,1fr)}}
+    h2.section{font-family:"Playfair Display",serif;font-size:clamp(24px,3vw,34px);margin:36px 0 12px}
+    .muted{color:#33473d}
+    .list{padding-left:18px}
+    footer{margin-top:50px;border-top:1px solid #0002;background:rgba(255,255,255,.55)}
+
+    /* Reuse hero image style from index */
+    .hero-img{
+      width:100%;
+      height:auto;
+      display:block;
+      border-radius:16px;
+      border:1px solid #0002;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .pill{display:inline-block;border:1px solid #0002;border-radius:999px;padding:6px 10px;background:#fff6}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .kpis .card{text-align:center}
+    .kpis .num{font-weight:800;font-size:24px;color:var(--green)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+      <div class="brand">
+        <a href="index.html" class="logo">
+          <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
+               onerror="this.onerror=null;this.src='images/logo.png'">
+        </a>
+      </div>
+      <nav>
+        <a href="index.html#shop">Order</a>
+        <a href="about.html">About</a>
+        <a href="index.html#ingredients">Ingredients</a>
+        <a href="index.html#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="container hero">
+      <div>
+        <h1 class="title">About ET Naturals</h1>
+        <div class="subtitle">Small-batch care, made simple.</div>
+        <p>ET Naturals started with a straightforward goal: make a **reliable, easy** hair & scalp treatment with ingredients we can stand behind. Root Renewal is blended in small batches with castor, batana, rosemary, and clove — nothing complicated, just what works.</p>
+        <div class="pill">Made in USA • Small-batch</div>
+      </div>
+
+      <img
+        src="images/root-renewal-hero.jpg"
+        alt="Root Renewal bottle"
+        class="hero-img"
+        width="768" height="768">
+    </section>
+
+    <section class="container">
+      <h2 class="section">Our Promise</h2>
+      <div class="grid cols-2">
+        <div class="card pad">
+          <h3 style="margin:0 0 8px">Simple formulas</h3>
+          <p class="muted">We keep the ingredient list short and purposeful. If it doesn’t serve the product, it doesn’t go in.</p>
+        </div>
+        <div class="card pad">
+          <h3 style="margin:0 0 8px">Consistent quality</h3>
+          <p class="muted">Small batches help maintain consistency from bottle to bottle. We document every run so you get repeatable results.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <h2 class="section">How we make it</h2>
+      <div class="card pad">
+        <ol class="list">
+          <li><b>Source & verify.</b> Oils are checked for identity and clarity before blending.</li>
+          <li><b>Measure & blend.</b> Controlled ratios by weight, mixed low-and-slow to preserve character.</li>
+          <li><b>Rest & bottle.</b> Short conditioning period before bottling into cobalt glass.</li>
+        </ol>
+        <p class="muted" style="font-size:13px;margin:8px 0 0">Cosmetic product. No therapeutic claims.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <h2 class="section">Why Root Renewal</h2>
+      <div class="kpis">
+        <div class="card pad">
+          <div class="num">4</div>
+          <div class="muted">Core oils</div>
+        </div>
+        <div class="card pad">
+          <div class="num">118 mL</div>
+          <div class="muted">Per bottle</div>
+        </div>
+        <div class="card pad">
+          <div class="num">30 days</div>
+          <div class="muted">Typical cadence</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <h2 class="section">Contact</h2>
+      <div class="card pad">
+        <p class="muted">Questions about orders or ingredients? We’re happy to help.</p>
+        <p>Email: <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a></p>
+        <p><a href="index.html#shop" class="pill">Shop Root Renewal</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:grid;gap:10px">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">ET</div>
+          <div>
+            <div style="font-weight:800">ET NATURALS</div>
+            <div class="muted" style="font-size:12px">growth powered by nature</div>
+          </div>
+        </div>
+        <div class="legal">
+          Distributed by ET Naturals • <a href="https://www.etnaturals.com/">etnaturals.com</a>
+        </div>
+      </div>
+      <div class="legal">
+        <a href="#">Privacy</a> • <a href="#">Terms</a> • <a href="#">Refunds</a><br/>
+        © <span id="y"></span> ET Naturals. Cosmetic product; not intended to diagnose, treat, cure, or prevent any disease.
+      </div>
+    </div>
+  </footer>
+
+  <script>document.getElementById('y').textContent=new Date().getFullYear()</script>
+</body>
+</html>

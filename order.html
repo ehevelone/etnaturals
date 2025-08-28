@@ -23,25 +23,35 @@
     @media (max-width:640px){ .wrap{ padding:16px; } }
 
     /* Compact payment button images */
-    .paygrid {
-      display: grid;
-      grid-template-columns: repeat(2, auto);  /* side-by-side */
-      gap: 12px;
-      justify-content: center;
-      justify-items: center;
-    }
-    .payimg {
-      width: 200px;          /* tweak to 180–240px if you want */
-      max-width: 200px;
-      height: auto;
-      border-radius: 12px;
-      border: 1px solid #2a2d31;
-      box-shadow: 0 2px 8px rgba(0,0,0,.25);
-    }
-    @media (max-width: 520px) {
-      .paygrid { grid-template-columns: 1fr; } /* stack on small screens */
-      .payimg  { width: 180px; max-width: 180px; }
-    }
+   /* Payment row layout — let PayPal choose its natural width */
+.paygrid{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Ensure the hosted button isn’t squeezed */
+#paypal-container{
+  flex:0 1 320px;      /* allow shrink/grow but keep reasonable width */
+  min-width:320px;     /* prevents vertical letter wrapping */
+}
+
+/* Keep your Venmo image sizing */
+.payimg{
+  width:200px;
+  max-width:200px;
+  height:auto;
+  border-radius:12px;
+  border:1px solid #2a2d31;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+@media (max-width:520px){
+  #paypal-container{ min-width:260px; }
+  .payimg{ width:180px; max-width:180px; }
+}
+
   </style>
 </head>
 <body>

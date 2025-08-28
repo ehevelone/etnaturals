@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>About Us — ET Naturals | Root Renewal</title>
-  <meta name="description" content="Learn about ET Naturals — our story, mission, process, and what makes Root Renewal different." />
+  <meta name="description" content="The ET Naturals story: navigating menopause-related shedding and choosing simple, natural ingredients to support a comfortable scalp and the look of stronger, fuller hair." />
   <meta name="theme-color" content="#215033" />
 
   <link rel="icon" type="image/png" href="images/favicon_sm.png">
@@ -40,7 +40,12 @@
     .list{padding-left:18px}
     footer{margin-top:50px;border-top:1px solid #0002;background:rgba(255,255,255,.55)}
 
-    /* Reuse hero image style from index */
+    .pill{display:inline-block;border:1px solid #0002;border-radius:999px;padding:6px 10px;background:#fff6}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .kpis .card{text-align:center}
+    .kpis .num{font-weight:800;font-size:24px;color:var(--green)}
+
+    /* Shared image style */
     .hero-img{
       width:100%;
       height:auto;
@@ -50,10 +55,7 @@
       box-shadow:0 10px 30px rgba(0,0,0,.08);
     }
 
-    .pill{display:inline-block;border:1px solid #0002;border-radius:999px;padding:6px 10px;background:#fff6}
-    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .kpis .card{text-align:center}
-    .kpis .num{font-weight:800;font-size:24px;color:var(--green)}
+    .disclaimer{font-size:12px;color:#436055;margin-top:8px}
   </style>
 </head>
 <body>
@@ -75,12 +77,15 @@
   </header>
 
   <main>
+    <!-- HERO -->
     <section class="container hero">
       <div>
-        <h1 class="title">About ET Naturals</h1>
-        <div class="subtitle">Small-batch care, made simple.</div>
-        <p>ET Naturals started with a straightforward goal: make a **reliable, easy** hair & scalp treatment with ingredients we can stand behind. Root Renewal is blended in small batches with castor, batana, rosemary, and clove — nothing complicated, just what works.</p>
-        <div class="pill">Made in USA • Small-batch</div>
+        <h1 class="title">Menopause changed her hair. Nature changed the routine.</h1>
+        <div class="subtitle">Our founder’s story</div>
+        <p>When shedding spiked during menopause, she went searching for a routine that felt simple and dependable. No complicated regimens—just a few natural oils with a long history of use.</p>
+        <p>What followed became <b>Root Renewal</b>: a small-batch blend of castor, batana, rosemary, and clove. It’s crafted to <b>support a comfortable scalp</b> and the <b>look of stronger, fuller hair</b>—a calm, consistent routine when everything else feels like it’s changing.</p>
+        <div class="pill">Small-batch • Made in USA</div>
+        <p class="disclaimer">Cosmetic product. For external use only. Individual results vary; no medical or therapeutic claims are made.</p>
       </div>
 
       <img
@@ -90,20 +95,22 @@
         width="768" height="768">
     </section>
 
+    <!-- OUR PROMISE -->
     <section class="container">
-      <h2 class="section">Our Promise</h2>
+      <h2 class="section">What we stand for</h2>
       <div class="grid cols-2">
         <div class="card pad">
-          <h3 style="margin:0 0 8px">Simple formulas</h3>
-          <p class="muted">We keep the ingredient list short and purposeful. If it doesn’t serve the product, it doesn’t go in.</p>
+          <h3 style="margin:0 0 8px">Simple, purposeful ingredients</h3>
+          <p class="muted">We choose a short list of oils used for generations in hair care. If it doesn’t serve the formula, it doesn’t go in.</p>
         </div>
         <div class="card pad">
-          <h3 style="margin:0 0 8px">Consistent quality</h3>
-          <p class="muted">Small batches help maintain consistency from bottle to bottle. We document every run so you get repeatable results.</p>
+          <h3 style="margin:0 0 8px">Consistency you can feel</h3>
+          <p class="muted">Small-batch blending helps keep texture and aroma familiar from bottle to bottle—because routine should feel reliable.</p>
         </div>
       </div>
     </section>
 
+    <!-- HOW WE MAKE IT -->
     <section class="container">
       <h2 class="section">How we make it</h2>
       <div class="card pad">
@@ -112,10 +119,11 @@
           <li><b>Measure & blend.</b> Controlled ratios by weight, mixed low-and-slow to preserve character.</li>
           <li><b>Rest & bottle.</b> Short conditioning period before bottling into cobalt glass.</li>
         </ol>
-        <p class="muted" style="font-size:13px;margin:8px 0 0">Cosmetic product. No therapeutic claims.</p>
+        <p class="disclaimer">Cosmetic product. No drug claims. Not intended to diagnose, treat, cure, or prevent any disease.</p>
       </div>
     </section>
 
+    <!-- WHY ROOT RENEWAL -->
     <section class="container">
       <h2 class="section">Why Root Renewal</h2>
       <div class="kpis">
@@ -134,6 +142,7 @@
       </div>
     </section>
 
+    <!-- CONTACT -->
     <section class="container">
       <h2 class="section">Contact</h2>
       <div class="card pad">

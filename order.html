@@ -178,5 +178,27 @@
     qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
   })();
   </script>
+  <script>
+(function(){
+  // Save the shopper's selection for the thank-you page
+  const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+
+  function capture(){
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const plan = (planEl && planEl.value) || 'onetime';
+    const qty  = Math.max(1, parseInt((qtyEl && qtyEl.value) || '1', 10));
+    const unit = PRICES[plan] || PRICES.onetime;
+    const total = +(unit * (plan === 'subscribe' ? 1 : qty)).toFixed(2);
+    localStorage.setItem('etn_order', JSON.stringify({ plan, qty, unit, total, ts: new Date().toISOString() }));
+  }
+
+  // Save on load and whenever plan/qty changes
+  window.addEventListener('load', capture);
+  document.getElementById('plan')?.addEventListener('change', capture);
+  document.getElementById('qty')?.addEventListener('input', capture);
+})();
+</script>
+
 </body>
 </html>

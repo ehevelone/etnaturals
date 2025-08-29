@@ -87,97 +87,49 @@
   <!-- PayPal SDK (Hosted Buttons) -->
   <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
 
-  <!-- PayPal SDK (Hosted Buttons only) -->
-<script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
+  <script>
+  (function(){
+    // === CONFIG ===
+    const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+    const STORE_NAME = 'ET Naturals';
+    const VENMO_HANDLE = 'etnaturals'; // ✅ your Venmo username (no @)
 
-<script>
-(function(){
-  // === CONFIG (your real IDs) ===
-  const BUTTON_IDS = {
-    subscribe: 'JHVUFW77DLZ62', // $14.99 subscription
-    onetime:   'P6L48JKW53W5J', // $19.99 one-time
-    bundle:    '6EXMRWBD9LCTQ'  // $54.99 bundle
-  };
+    // ✅ Your PayPal Hosted Button IDs
+    const BUTTON_IDS = {
+      subscribe: 'JHVUFW77DLZ62', // $14.99 subscription
+      onetime:   'P6L48JKW53W5J', // $19.99 one-time
+      bundle:    '6EXMRWBD9LCTQ'  // $54.99 bundle
+    };
 
-  // Elements
-  const planEl = document.getElementById('plan');
-  const qtyEl  = document.getElementById('qty');
-  const totEl  = document.getElementById('totals');
-  const venmoA = document.getElementById('lnkVenmo');
-  const container = document.getElementById('paypal-container');
+    // Elements
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const totEl  = document.getElementById('totals');
+    const venmoA = document.getElementById('lnkVenmo');
+    const container = document.getElementById('paypal-container');
 
-  // Prices + Venmo wiring (unchanged from before)
-  const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
-  const STORE_NAME = 'ET Naturals';
-  const VENMO_HANDLE = 'etnaturals';
+    // Helpers
+    const isMobile   = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const planLabel  = (p) => p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time');
+    const showToast  = (msg) => { const t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1800); };
 
-  const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const planLabel = p => p==='subscribe' ? 'Subscription' : p==='bundle' ? 'Bundle (3-Pack)' : 'One-Time';
+    function parseQueryPlan(){
+      const p = new URLSearchParams(location.search).get('plan');
+      if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
+    }
 
-  function parseQueryPlan(){
-    const p = new URLSearchParams(location.search).get('plan');
-    if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
-  }
-  function calc(){
-    const plan = planEl.value || 'onetime';
-    const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
-    const unit = PRICES[plan] ?? PRICES.onetime;
-    const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
-    return { plan, qty, unit, total };
-  }
-  function updateTotals(){
-    const { total, qty, unit, plan } = calc();
-    totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
-  }
-  function updateVenmo(){
-    const { plan, qty, total } = calc();
-    const note = encodeURIComponent(`${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`);
-    const amount = total.toFixed(2);
-    venmoA.href = isMobile()
-      ? `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`
-      : `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
-  }
+    function calc(){
+      const plan = planEl.value || 'onetime';
+      const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
+      const unit = PRICES[plan] ?? PRICES.onetime;
+      // Hosted buttons use amounts defined in PayPal; qty is for Venmo + display only
+      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
+      return { plan, qty, unit, total };
+    }
 
-  // Robust loader: wait for SDK, then render; re-render on plan change
-  function whenPayPalReady(cb, tries=40){
-    if (window.paypal && paypal.HostedButtons) return cb();
-    if (tries <= 0) return console.warn('PayPal SDK not ready');
-    setTimeout(() => whenPayPalReady(cb, tries-1), 150);
-  }
-  function renderPayPal(){
-    const { plan } = calc();
-    const id = BUTTON_IDS[plan];
-    container.innerHTML = '';
-    whenPayPalReady(() => {
-      paypal.HostedButtons({ hostedButtonId: id })
-        .render('#paypal-container')
-        .catch(err => console.error('PayPal render error', err));
-    });
-  }
-
-  // Init
-  parseQueryPlan();
-  updateTotals();
-  updateVenmo();
-  renderPayPal();
-
-  // Events
-  planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
-  qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
-
-  // (Optional) persist selection for thank-you page summary
-  function saveOrderDraft(){
-    const { plan, qty, unit, total } = calc();
-    localStorage.setItem('etn_order', JSON.stringify({ plan, qty, unit, total, ts: new Date().toISOString() }));
-  }
-  // Call after totals update
-  const _oldUpdateTotals = updateTotals;
-  updateTotals = function(){ _oldUpdateTotals(); saveOrderDraft(); };
-  // Run once to save current state
-  saveOrderDraft();
-})();
-</script>
-
+    function updateTotals(){
+      const { total, qty, unit, plan } = calc();
+      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
     }
 
     function updateVenmo(){
@@ -225,16 +177,6 @@
     planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
     qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
   })();
-
-  function saveOrderDraft(){
-  const { plan, qty, unit, total } = calc();
-  const record = {
-    plan, qty, unit, total,
-    ts: new Date().toISOString()
-  };
-  localStorage.setItem('etn_order', JSON.stringify(record));
-}
-
   </script>
 </body>
 </html>

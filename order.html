@@ -130,6 +130,7 @@
     function updateTotals(){
       const { total, qty, unit, plan } = calc();
       totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
+      saveOrderDraft();
     }
 
     function updateVenmo(){
@@ -177,6 +178,16 @@
     planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
     qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
   })();
+
+  function saveOrderDraft(){
+  const { plan, qty, unit, total } = calc();
+  const record = {
+    plan, qty, unit, total,
+    ts: new Date().toISOString()
+  };
+  localStorage.setItem('etn_order', JSON.stringify(record));
+}
+
   </script>
 </body>
 </html>

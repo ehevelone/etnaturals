@@ -97,103 +97,89 @@
 
   <div class="toast" id="toast">Coming soon.</div>
 
-  <!-- PayPal SDK (Hosted Buttons only — we removed enable-funding=venmo to avoid duplicates) -->
+  <!-- PayPal SDK (Hosted Buttons) -->
   <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
 
   <!-- App logic -->
- <!-- PayPal SDK (keep this ABOVE the block below) -->
-<script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
+  <script>
+  (function(){
+    // === CONFIG ===
+    const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+    const STORE_NAME = 'ET Naturals';
+    const VENMO_HANDLE = 'YOUR_VENMO_HANDLE'; // <- set your Venmo username (no @)
 
-<!-- REPLACE your current script block with this one -->
-<script>
-(function(){
-  // === CONFIG ===
-  const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
-  const STORE_NAME = 'ET Naturals';
-  const VENMO_HANDLE = 'YOUR_VENMO_HANDLE'; // set your Venmo username (no @)
+    // ✅ Your PayPal Hosted Button IDs
+    const BUTTON_IDS = {
+      subscribe: 'JHVUFW77DLZ62', // $14.99 subscription
+      onetime:   'P6L48JKW53W5J', // $19.99 one-time
+      bundle:    '6EXMRWBD9LCTQ'  // $54.99 bundle
+    };
 
-  // Map plans -> correct PayPal Hosted Button IDs
-  // You confirmed 6EXMRWBD9LCTQ is the $54.99 button, so it belongs to "bundle".
-  const BUTTON_IDS = {
-    subscribe: 'PASTE_SUBSCRIBE_BUTTON_ID', // $14.99 subscription hosted button ID
-    onetime:   'PASTE_ONETIME_BUTTON_ID',   // $19.99 one-time hosted button ID
-    bundle:    '6EXMRWBD9LCTQ'              // ✅ $54.99 bundle hosted button ID
-  };
+    // Elements
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const totEl  = document.getElementById('totals');
+    const venmoA = document.getElementById('lnkVenmo');
 
-  // Elements
-  const planEl = document.getElementById('plan');
-  const qtyEl  = document.getElementById('qty');
-  const totEl  = document.getElementById('totals');
-  const venmoA = document.getElementById('lnkVenmo');
+    // Helpers
+    const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const planLabel = (p) => p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time');
 
-  // Helpers
-  const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const planLabel = (p) => p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time');
-
-  function parseQueryPlan(){
-    const p = new URLSearchParams(location.search).get('plan');
-    if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
-  }
-
-  function calc(){
-    const plan = planEl.value || 'onetime';
-    const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
-    const unit = PRICES[plan] ?? PRICES.onetime;
-    // Hosted buttons use the amount defined in PayPal; qty is for Venmo + display only
-    const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
-    return { plan, qty, unit, total };
-  }
-
-  function updateTotals(){
-    const { total, qty, unit, plan } = calc();
-    totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
-  }
-
-  function updateVenmo(){
-    const { plan, qty, total } = calc();
-    const label = `${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`;
-    const amount = total.toFixed(2);
-    const note = encodeURIComponent(label);
-    if (VENMO_HANDLE && VENMO_HANDLE !== 'YOUR_VENMO_HANDLE') {
-      const deep = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`;
-      const web  = `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
-      venmoA.href = isMobile() ? deep : web;
-    } else {
-      venmoA.href = '#';
-    }
-  }
-
-  // Render PayPal Hosted Button for the selected plan
-  function renderPayPal(){
-    const container = document.getElementById('paypal-container');
-    if (!container || typeof paypal === 'undefined' || !paypal.HostedButtons) return;
-
-    const { plan } = calc();
-    const id = BUTTON_IDS[plan];
-
-    container.innerHTML = '';
-
-    // If no real ID yet, hide PayPal for that plan
-    if (!id || /^PASTE_/.test(id)) {
-      container.style.display = 'none';
-      return;
+    function parseQueryPlan(){
+      const p = new URLSearchParams(location.search).get('plan');
+      if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
     }
 
-    container.style.display = 'block';
-    paypal.HostedButtons({ hostedButtonId: id }).render('#paypal-container');
-  }
+    function calc(){
+      const plan = planEl.value || 'onetime';
+      const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
+      const unit = PRICES[plan] ?? PRICES.onetime;
+      // Hosted buttons use amounts defined in PayPal; qty is for Venmo + display only
+      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
+      return { plan, qty, unit, total };
+    }
 
-  // Init
-  parseQueryPlan();
-  updateTotals();
-  updateVenmo();
-  renderPayPal();
+    function updateTotals(){
+      const { total, qty, unit, plan } = calc();
+      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
+    }
 
-  // Events
-  planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
-  qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
-})();
-</script>
+    function updateVenmo(){
+      const { plan, qty, total } = calc();
+      const label = `${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`;
+      const amount = total.toFixed(2);
+      const note = encodeURIComponent(label);
+      if (VENMO_HANDLE && VENMO_HANDLE !== 'YOUR_VENMO_HANDLE') {
+        const deep = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`;
+        const web  = `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
+        venmoA.href = isMobile() ? deep : web;
+      } else {
+        venmoA.href = '#';
+      }
+    }
 
+    // PayPal Hosted Button render (by plan)
+    function renderPayPal(){
+      const container = document.getElementById('paypal-container');
+      if (!container || typeof paypal === 'undefined' || !paypal.HostedButtons) return;
+
+      const { plan } = calc();
+      const id = BUTTON_IDS[plan];
+
+      container.innerHTML = ''; // clear previous render
+      paypal.HostedButtons({ hostedButtonId: id }).render('#paypal-container');
+    }
+
+    // Init
+    parseQueryPlan();
+    updateTotals();
+    updateVenmo();
+    renderPayPal();
+
+    // Events
+    planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
+    qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
+  })();
+  </script>
 </body>
 </html>

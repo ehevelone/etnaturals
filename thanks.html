@@ -57,76 +57,96 @@
     </div>
   </div>
 
-  <script>
-    // Load the draft saved on order.html
-    const draft = (() => { try { return JSON.parse(localStorage.getItem('etn_order')||'null'); } catch { return null; } })();
-    const PLAN_LABEL = p => p==='subscribe' ? 'Subscription' : p==='bundle' ? 'Bundle (3-Pack)' : 'One-Time';
-    const fmt = n => Number(n).toFixed(2);
+ <!-- PayPal SDK (Hosted Buttons only) -->
+<script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
 
-    function renderSummary(){
-      const box = document.getElementById('summary');
-      if(!draft){
-        box.innerHTML = `
-          <div class="line"><span>Order</span><span>Not available</span></div>
-          <p class="note">We couldn’t load your selection. You can still print this page and use your PayPal email receipt as proof of purchase.</p>`;
-        return;
-      }
-      const date = new Date(draft.ts);
-      const planText = PLAN_LABEL(draft.plan);
-      const qtyText  = draft.plan==='subscribe' ? '—' : draft.qty;
-      const unitText = '$' + fmt(draft.unit) + (draft.plan==='subscribe' ? ' / 30 days' : '');
-      const totalText= '$' + fmt(draft.total);
+<script>
+(function(){
+  // === CONFIG (your real IDs) ===
+  const BUTTON_IDS = {
+    subscribe: 'JHVUFW77DLZ62', // $14.99 subscription
+    onetime:   'P6L48JKW53W5J', // $19.99 one-time
+    bundle:    '6EXMRWBD9LCTQ'  // $54.99 bundle
+  };
 
-      box.innerHTML = `
-        <div class="line"><span>Plan</span><span>${planText}</span></div>
-        <div class="line"><span>Quantity</span><span>${qtyText}</span></div>
-        <div class="line"><span>Unit</span><span>${unitText}</span></div>
-        <div class="line total"><span>Total</span><span>${totalText}</span></div>
-        <div class="line"><span>Date</span><span>${date.toLocaleString()}</span></div>
-      `;
-    }
+  // Elements
+  const planEl = document.getElementById('plan');
+  const qtyEl  = document.getElementById('qty');
+  const totEl  = document.getElementById('totals');
+  const venmoA = document.getElementById('lnkVenmo');
+  const container = document.getElementById('paypal-container');
 
-    // Background submit to Netlify Forms (emails site owner)
-    function notifyOwner(){
-      const sent = document.getElementById('sent');
-      const formName = 'order-notify';
-      if(!draft){ return; }
+  // Prices + Venmo wiring (unchanged from before)
+  const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+  const STORE_NAME = 'ET Naturals';
+  const VENMO_HANDLE = 'etnaturals';
 
-      const data = {
-        'form-name': formName,
-        plan: draft.plan,
-        qty:  draft.plan==='subscribe' ? '—' : String(draft.qty),
-        unit: draft.plan==='subscribe' ? '$' + fmt(draft.unit) + ' / 30 days' : '$' + fmt(draft.unit),
-        total: '$' + fmt(draft.total),
-        timestamp: draft.ts
-      };
+  const isMobile = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const planLabel = p => p==='subscribe' ? 'Subscription' : p==='bundle' ? 'Bundle (3-Pack)' : 'One-Time';
 
-      // Build x-www-form-urlencoded body
-      const body = new URLSearchParams(data).toString();
+  function parseQueryPlan(){
+    const p = new URLSearchParams(location.search).get('plan');
+    if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
+  }
+  function calc(){
+    const plan = planEl.value || 'onetime';
+    const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
+    const unit = PRICES[plan] ?? PRICES.onetime;
+    const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
+    return { plan, qty, unit, total };
+  }
+  function updateTotals(){
+    const { total, qty, unit, plan } = calc();
+    totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
+  }
+  function updateVenmo(){
+    const { plan, qty, total } = calc();
+    const note = encodeURIComponent(`${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`);
+    const amount = total.toFixed(2);
+    venmoA.href = isMobile()
+      ? `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`
+      : `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
+  }
 
-      fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
-      })
-      .then(() => { if (sent) sent.style.display = 'block'; })
-      .catch(() => { /* ignore silently; PayPal email still covers you */ });
-    }
-
-    // Actions
-    document.getElementById('btnPrint').addEventListener('click', () => window.print());
-    document.getElementById('btnEmail').addEventListener('click', () => {
-      const to = document.getElementById('email').value.trim();
-      if(!to){ alert('Enter your email address first.'); return; }
-      const subject = encodeURIComponent('Your ET Naturals order summary');
-      const s = document.getElementById('summary').innerText.trim();
-      const body = encodeURIComponent(`Hello,\n\nHere is your order summary:\n\n${s}\n\nThank you!`);
-      window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
+  // Robust loader: wait for SDK, then render; re-render on plan change
+  function whenPayPalReady(cb, tries=40){
+    if (window.paypal && paypal.HostedButtons) return cb();
+    if (tries <= 0) return console.warn('PayPal SDK not ready');
+    setTimeout(() => whenPayPalReady(cb, tries-1), 150);
+  }
+  function renderPayPal(){
+    const { plan } = calc();
+    const id = BUTTON_IDS[plan];
+    container.innerHTML = '';
+    whenPayPalReady(() => {
+      paypal.HostedButtons({ hostedButtonId: id })
+        .render('#paypal-container')
+        .catch(err => console.error('PayPal render error', err));
     });
+  }
 
-    // Init
-    renderSummary();
-    notifyOwner(); // auto-send notify on load
-  </script>
+  // Init
+  parseQueryPlan();
+  updateTotals();
+  updateVenmo();
+  renderPayPal();
+
+  // Events
+  planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
+  qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
+
+  // (Optional) persist selection for thank-you page summary
+  function saveOrderDraft(){
+    const { plan, qty, unit, total } = calc();
+    localStorage.setItem('etn_order', JSON.stringify({ plan, qty, unit, total, ts: new Date().toISOString() }));
+  }
+  // Call after totals update
+  const _oldUpdateTotals = updateTotals;
+  updateTotals = function(){ _oldUpdateTotals(); saveOrderDraft(); };
+  // Run once to save current state
+  saveOrderDraft();
+})();
+</script>
+
 </body>
 </html>

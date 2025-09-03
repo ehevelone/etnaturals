@@ -25,7 +25,7 @@
     .stars { letter-spacing:2px; }
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
-    .meta { font-size:12px; color:var(--muted); } /* fixed */
+    .meta { font-size:12px; color:var(--muted); }
     .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
 
     /* Modal form */
@@ -42,14 +42,14 @@
     .form { padding:14px; display:grid; gap:10px; }
     .form input, .form select, .form textarea {
       width:100%; background:#0f1012; border:1px solid var(--stroke);
-      color:#f6f7f9; border-radius:10px; padding:10px;
+      color:var(--text); border-radius:10px; padding:10px;
     }
     .form button { cursor:pointer; }
 
     /* Footer nav */
     .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
     .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
-    .footer-nav a{ color:#f6f7f9; opacity:.9; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
     .footer-nav a:hover{ opacity:1; text-decoration:underline; }
     .footer-nav .legal{ font-size:12px; opacity:.75; }
   </style>
@@ -120,27 +120,34 @@
         <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
       </div>
       <div class="modal-body">
-        <!-- Inline form -->
-        <form id="reviewForm" class="form">
+        <!-- Hidden iframe to keep page in place -->
+        <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
+
+        <!-- Inline form: posts directly to Apps Script (no CORS) -->
+        <form id="reviewForm" class="form"
+              action="https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec"
+              method="POST" target="submitSink" enctype="multipart/form-data" novalidate>
+          <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+
           <div class="row" style="gap:10px">
             <div style="flex:1;min-width:200px">
               <label for="reviewName">Name</label>
-              <input id="reviewName" type="text" placeholder="Your name" required>
+              <input id="reviewName" name="name" type="text" placeholder="Your name" required>
             </div>
             <div style="flex:1;min-width:200px">
               <label for="reviewLoc">City, State (optional)</label>
-              <input id="reviewLoc" type="text" placeholder="e.g., Omaha, NE">
+              <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
             </div>
           </div>
 
           <label for="reviewRating">Rating</label>
-          <select id="reviewRating" required>
+          <select id="reviewRating" name="rating" required>
             <option value="" selected disabled>Select…</option>
             <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
           </select>
 
           <label for="reviewText">Your experience</label>
-          <textarea id="reviewText" rows="4" placeholder="What did you think?" required></textarea>
+          <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
 
           <label for="reviewPhoto">Photo (optional)</label>
           <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
@@ -148,7 +155,7 @@
 
           <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
             <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
-            <button class="open-form" type="submit">Submit</button>
+            <button class="open-form" type="submit" id="submitBtn">Submit</button>
           </div>
         </form>
       </div>
@@ -173,21 +180,16 @@
   const CSV_URL_APPROVED = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDBav_545GPz3w7ihMPN8YWqmZ0XGODHuI4A9OkrojMAbZlwEcOnOBQMMwF1ZI13eIzAc5ywrN1Jc/pub?gid=1688658905&single=true&output=csv';
   // ============================
 
-  // Max file size in MB (keep small since we'll send base64)
   const MAX_IMAGE_MB = 2;
   const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
-  // Read file as a data URL (e.g., "data:image/jpeg;base64,...")
+  // Convert file to data URL for server
   function fileToDataURL(file) {
     return new Promise((resolve, reject) => {
-      if (!file) return resolve(null);
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        return reject(new Error("Please upload JPG, PNG, or WEBP (HEIC isn’t supported)."));
-      }
+      if (!file) return resolve('');
+      if (!ALLOWED_TYPES.includes(file.type)) return reject(new Error("Please upload JPG, PNG, or WEBP (no HEIC)."));
       const sizeMb = file.size / (1024 * 1024);
-      if (sizeMb > MAX_IMAGE_MB) {
-        return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
-      }
+      if (sizeMb > MAX_IMAGE_MB) return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
       const r = new FileReader();
       r.onload = () => resolve(r.result);
       r.onerror = () => reject(new Error("Could not read image file."));
@@ -254,7 +256,6 @@
       const i = H.indexOf(norm(cand));
       if (i !== -1) return i;
     }
-    // partial match fallback
     for (let i=0;i<H.length;i++){
       if (candidates.some(c => H[i].includes(norm(c)))) return i;
     }
@@ -322,13 +323,15 @@
     );
   }
 
-  // === Submit handler + preview (FormData + no-cors) ===
+  // === Submit handler (iframe POST, no CORS) ===
   document.addEventListener('DOMContentLoaded', () => {
     const form  = document.getElementById('reviewForm');
     const modal = document.getElementById('formModal');
+    const imgHidden = document.getElementById('imageDataUrl');
+    const submitBtn = document.getElementById('submitBtn');
+
     if (!form) return;
 
-    // Live image preview
     const photoInput = document.getElementById('reviewPhoto');
     const prev = document.getElementById('photoPreview');
     if (photoInput && prev) {
@@ -343,49 +346,40 @@
       };
     }
 
-    // Secondary cancel button
+    // Close 2nd button
     const close2 = document.getElementById('closeFormBtn2');
     if (close2) close2.addEventListener('click', () => {
       modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
     });
 
+    // When iframe finishes (server responded), show success + refresh list
+    const sink = document.getElementById('submitSink');
+    sink.addEventListener('load', () => {
+      alert("Thanks! Your review was submitted.");
+      form.reset();
+      if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
+      modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+      setTimeout(() => {
+        const mount = document.getElementById('approved');
+        if (mount) mount.innerHTML = '';
+        loadCSV(CSV_URL_APPROVED, mountApproved);
+      }, 1200);
+      submitBtn.disabled = false;
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name   = document.getElementById('reviewName')?.value?.trim() || '';
-      const loc    = document.getElementById('reviewLoc')?.value?.trim() || '';
-      const rating = document.getElementById('reviewRating')?.value || '';
-      const text   = document.getElementById('reviewText')?.value?.trim() || '';
-      const file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
+      if (submitBtn.disabled) return;
+      submitBtn.disabled = true;
 
       try {
-        // validate + convert optional photo to data URL
-        let image_data_url = '';
-        if (file) image_data_url = await fileToDataURL(file);
-
-        // Build FormData (no headers)
-        const fd = new FormData();
-        fd.append('name', name);
-        fd.append('loc', loc);
-        fd.append('rating', rating);
-        fd.append('text', text);
-        if (image_data_url) fd.append('image_data_url', image_data_url);
-
-        // Post without CORS preflight; server receives it fine
-        await fetch("https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec", {
-          method: "POST",
-          mode: "no-cors",
-          body: fd
-        });
-
-        alert("Thanks! Your review was submitted.");
-        form.reset();
-        if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
-        modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
-
-        // Reload approved list after a short delay (CSV publish may lag briefly)
-        setTimeout(() => { document.getElementById('approved').innerHTML = ''; loadCSV(CSV_URL_APPROVED, mountApproved); }, 1200);
+        const file = photoInput?.files?.[0] || null;
+        imgHidden.value = file ? await fileToDataURL(file) : '';
+        // submit the form to the hidden iframe
+        form.submit();
       } catch (err) {
         alert(err.message || "Something went wrong.");
+        submitBtn.disabled = false;
       }
     });
   });

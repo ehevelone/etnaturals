@@ -25,7 +25,7 @@
     .stars { letter-spacing:2px; }
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
-    .meta { font-size:12px; color:var(--muted); }
+    .meta { font-size:12px; color:#muted; }
     .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
 
     /* Modal form */
@@ -35,28 +35,21 @@
     .modal-dialog { width:min(900px, 96vw); background:var(--card); border:1px solid var(--stroke); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.5); overflow:hidden; }
     .modal-head { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--stroke); }
     .modal-head h3 { margin:0; font-size:16px; }
-    .modal-close { appearance:none; background:transparent; color:var(--text); border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
+    .modal-close { appearance:none; background:transparent; color:#f6f7f9; border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
     .modal-body { padding:0; }
 
     /* Modal form fields */
     .form { padding:14px; display:grid; gap:10px; }
     .form input, .form select, .form textarea {
       width:100%; background:#0f1012; border:1px solid var(--stroke);
-      color:var(--text); border-radius:10px; padding:10px;
+      color:#f6f7f9; border-radius:10px; padding:10px;
     }
     .form button { cursor:pointer; }
-
-    /* Staff review section */
-    .review { border:1px dashed #3a3f46; background:#101114; }
-    .pill { display:inline-block; border:1px solid var(--stroke); background:#0f1012; border-radius:999px; padding:6px 10px; font-size:12px; color:#cfd6dc; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-    .btn { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:8px 12px; border-radius:10px; cursor:pointer; }
-    .hint { font-size:12px; color:#9aa3ae; }
 
     /* Footer nav */
     .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
     .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
-    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a{ color:#f6f7f9; opacity:.9; }
     .footer-nav a:hover{ opacity:1; text-decoration:underline; }
     .footer-nav .legal{ font-size:12px; opacity:.75; }
   </style>
@@ -75,7 +68,7 @@
     <!-- Intro -->
     <section class="card">
       <h1>Customer Testimonials</h1>
-      <p class="muted">Real experiences from our community. New submissions are <b>reviewed</b> before they appear here.</p>
+      <p class="muted">Real experiences from our community. New submissions appear instantly below.</p>
     </section>
 
     <!-- Approved (curated + live from sheet) -->
@@ -108,22 +101,10 @@
     <!-- Submit a testimonial (opens modal) -->
     <section class="card" id="submit">
       <h2 style="margin:0 0 6px">Share your experience</h2>
-      <p class="muted">Your words help others. Submissions are marked <span class="pill">Under review</span> and published after approval.</p>
+      <p class="muted">Your words help others.</p>
 
       <button class="open-form" id="openFormBtn" type="button">Add your testimonial</button>
       <p class="hint" style="margin-top:8px">Prefer email? Write us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
-    </section>
-
-    <!-- Staff-only review list (shows with ?review=1&key=PIN) -->
-    <section class="card review" id="reviewBox" hidden>
-      <div class="row" style="justify-content:space-between;">
-        <h2 style="margin:0">Under Review <span class="pill">Staff</span></h2>
-        <div class="row">
-          <a id="openSheet" class="btn" target="_blank" rel="noopener">Open Moderation Sheet</a>
-          <span class="hint">Change <b>Status</b> to Approved or Declined in the Sheet.</span>
-        </div>
-      </div>
-      <div id="pending" class="grid cols-2" style="margin-top:14px"></div>
     </section>
 
     <section class="card">
@@ -139,7 +120,7 @@
         <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
       </div>
       <div class="modal-body">
-        <!-- Inline form replaces Google Form embed -->
+        <!-- Inline form -->
         <form id="reviewForm" class="form">
           <div class="row" style="gap:10px">
             <div style="flex:1;min-width:200px">
@@ -188,22 +169,28 @@
   </nav>
 
   <script>
-  // ====== CONFIGURE THESE ======
+  // ====== CONFIGURE THIS ======
   const CSV_URL_APPROVED = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDBav_545GPz3w7ihMPN8YWqmZ0XGODHuI4A9OkrojMAbZlwEcOnOBQMMwF1ZI13eIzAc5ywrN1Jc/pub?gid=1688658905&single=true&output=csv';
-  const CSV_URL_PENDING  = 'PASTE_PENDING_TAB_CSV_URL_HERE'; // publish your Pending tab as CSV and paste here
-  const REVIEW_PIN = '2468';
-  const SHEET_LINK = 'PASTE_FULL_GOOGLE_SHEET_LINK_HERE';
-  // =============================
-  // ===== Image upload config (Cloudinary) =====
-  const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
-  const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_PRESET"; // unsigned preset
-  const MAX_FILE_MB = 3;
-  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+  // ============================
+
+  // Max file size in MB (keep small since we'll send base64)
+  const MAX_IMAGE_MB = 2;
+
+  // Read file as a data URL (e.g., "data:image/jpeg;base64,...")
+  function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve(null);
+      if (!/^image\//.test(file.type)) return reject(new Error("Please upload an image file."));
+      const sizeMb = file.size / (1024 * 1024);
+      if (sizeMb > MAX_IMAGE_MB) return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error("Could not read image file."));
+      r.readAsDataURL(file);
+    });
+  }
 
   document.getElementById('year').textContent = new Date().getFullYear();
-  if (SHEET_LINK && !SHEET_LINK.startsWith('PASTE_')) {
-    document.getElementById('openSheet').href = SHEET_LINK;
-  }
 
   // Modal open/close
   (function(){
@@ -216,17 +203,6 @@
     closeBtn.addEventListener('click', close);
     modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-  })();
-
-  // Staff review toggle
-  (function(){
-    const q = new URLSearchParams(location.search);
-    const show = q.get('review') === '1';
-    const key  = q.get('key') || '';
-    if (show && key === REVIEW_PIN && CSV_URL_PENDING && !CSV_URL_PENDING.startsWith('PASTE_')) {
-      document.getElementById('reviewBox').hidden = false;
-      loadCSV(CSV_URL_PENDING, mountPending);
-    }
   })();
 
   // Load approved (public)
@@ -265,7 +241,7 @@
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
 
-  // tolerate header variations (e.g., "Full Name" OR "Name", etc.)
+  // tolerate header variations
   function findCol(head, candidates){
     const norm = s => s.toLowerCase().replace(/\s+/g,' ').trim();
     const H = head.map(norm);
@@ -280,7 +256,7 @@
     return -1;
   }
 
-  // cache-buster so browser always fetches fresh CSV
+  // cache-buster
   function withCacheBuster(url){
     const sep = url.includes('?') ? '&' : '?';
     return `${url}${sep}_cb=${Date.now()}`;
@@ -341,47 +317,9 @@
     );
   }
 
-  function mountPending(rows){
-    const list = mapRows(rows);
-    const mount = document.getElementById('pending');
-    mount.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="muted">No pending submissions.</div>`;
-  }
-
-  // Upload selected image to Cloudinary and return its HTTPS URL
-  async function uploadReviewPhoto(file) {
-    if (!file) return null; // no photo attached
-
-    // Basic validation
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      throw new Error("Please upload a JPG, PNG, or WEBP image.");
-    }
-    const sizeMb = file.size / (1024 * 1024);
-    if (sizeMb > MAX_FILE_MB) {
-      throw new Error(`Image must be ≤ ${MAX_FILE_MB} MB.`);
-    }
-
-    const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
-    const fd = new FormData();
-    fd.append("file", file);
-    fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-    fd.append("folder", "reviews"); // optional; remove if you don't want a folder
-
-    const res = await fetch(endpoint, { method: "POST", body: fd });
-    if (!res.ok) {
-      try { await res.text(); } catch (_) {}
-      throw new Error("Upload failed. Try a smaller image or a different file.");
-    }
-
-    const data = await res.json();
-    if (!data.secure_url) {
-      throw new Error("Upload succeeded but no URL returned.");
-    }
-    return data.secure_url;
-  }
-
-  // === Submit handler + preview ===
+  // === Submit handler + preview (Apps Script + Drive, writes straight to Approved) ===
   document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('reviewForm');
+    const form  = document.getElementById('reviewForm');
     const modal = document.getElementById('formModal');
     if (!form) return;
 
@@ -404,7 +342,6 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const name   = document.getElementById('reviewName')?.value?.trim() || '';
       const loc    = document.getElementById('reviewLoc')?.value?.trim() || '';
       const rating = document.getElementById('reviewRating')?.value || '';
@@ -412,24 +349,24 @@
       const file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
 
       try {
-        // 1) Upload optional photo to Cloudinary
-        const imageUrl = await uploadReviewPhoto(file);
+        // convert optional photo to data URL (base64)
+        const image_data_url = await fileToDataURL(file);
 
-        // 2) Send to your Apps Script (add 'Location' & 'image_url' columns)
-        const payload = { name, loc, rating, text, image_url: imageUrl || '' };
-
-        // TODO: replace with your deployed Apps Script Web App URL
-        const res = await fetch("YOUR_APPS_SCRIPT_WEB_APP_URL", {
+        // send to your Apps Script Web App
+        const payload = { name, loc, rating, text, image_data_url };
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
 
         if (!res.ok) throw new Error("Could not submit review.");
-        alert("Thanks! Your review was submitted for approval.");
+        alert("Thanks! Your review was submitted.");
         form.reset();
         if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
         modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+        // Reload approved list after a short delay (to allow Sheet write to publish)
+        setTimeout(() => { document.getElementById('approved').innerHTML = ''; loadCSV(CSV_URL_APPROVED, mountApproved); }, 1000);
       } catch (err) {
         alert(err.message || "Something went wrong.");
       }

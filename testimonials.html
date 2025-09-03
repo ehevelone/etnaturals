@@ -142,14 +142,16 @@
   // =============================
 
   document.getElementById('year').textContent = new Date().getFullYear();
-  document.getElementById('openSheet').href = SHEET_LINK;
+  if (SHEET_LINK && !SHEET_LINK.startsWith('PASTE_')) {
+    document.getElementById('openSheet').href = SHEET_LINK;
+  }
 
-  // Staff review toggle
+  // Show staff review if URL says so and Pending CSV is configured
   (function(){
     const q = new URLSearchParams(location.search);
     const show = q.get('review') === '1';
     const key  = q.get('key') || '';
-    if (show && key === REVIEW_PIN && !CSV_URL_PENDING.startsWith('PASTE_')) {
+    if (show && key === REVIEW_PIN && CSV_URL_PENDING && !CSV_URL_PENDING.startsWith('PASTE_')) {
       document.getElementById('reviewBox').hidden = false;
       loadCSV(CSV_URL_PENDING, mountPending);
     }
@@ -158,7 +160,7 @@
   // Load approved (public)
   loadCSV(CSV_URL_APPROVED, mountApproved);
 
-  // --- CSV helpers ---
+  // --- CSV helpers (single copies with cache-buster) ---
   function parseCSV(text){
     const rows = [];
     let row = [], cell = '', inQuotes = false;
@@ -179,34 +181,49 @@
     if (cell.length || row.length) { row.push(cell); rows.push(row); }
     return rows;
   }
-  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, m => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+    ));
+  }
+
   function starHTML(n){
     n = Number(n)||0; n = Math.max(1, Math.min(5, n));
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
+
+  // cache-buster to force fresh CSV on every load
+  function withCacheBuster(url){
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}_cb=${Date.now()}`;
+  }
+
   function loadCSV(url, cb){
-    if(!url || url.startsWith('PASTE_')) return;
-    fetch(url, { cache:'no-store' })
+    if(!url) return;
+    fetch(withCacheBuster(url), { cache:'no-store' })
       .then(r => r.text())
       .then(t => cb(parseCSV(t)))
       .catch(() => {/* silent */});
   }
+
   function mapRows(rows){
     if (!rows || !rows.length) return [];
     const head = rows[0].map(h => h.trim().toLowerCase());
     const idx = {
-      name: head.indexOf('full name'),
-      loc:  head.indexOf('city, state'),
+      name:   head.indexOf('full name'),
+      loc:    head.indexOf('city, state'),
       rating: head.indexOf('rating'),
-      msg: head.indexOf('your testimonial')
+      msg:    head.indexOf('your testimonial')
     };
     return rows.slice(1).map(r => ({
-      name: (idx.name>=0? r[idx.name] : '').trim(),
-      loc:  (idx.loc >=0? r[idx.loc]  : '').trim(),
+      name:   (idx.name>=0? r[idx.name] : '').trim(),
+      loc:    (idx.loc >=0? r[idx.loc]  : '').trim(),
       rating: (idx.rating>=0? r[idx.rating] : '5').trim(),
-      msg:  (idx.msg >=0? r[idx.msg]  : '').trim()
+      msg:    (idx.msg >=0? r[idx.msg]  : '').trim()
     })).filter(x => x.name && x.msg);
   }
+
   function cardHTML(t){
     const initial = (t.name||'?')[0]?.toUpperCase() || '?';
     return `
@@ -223,12 +240,14 @@
       </article>
     `;
   }
+
   function mountApproved(rows){
     const list = mapRows(rows);
     if(!list.length) return;
     const mount = document.getElementById('approved');
     mount.insertAdjacentHTML('beforeend', list.map(cardHTML).join(''));
   }
+
   function mountPending(rows){
     const list = mapRows(rows);
     const mount = document.getElementById('pending');

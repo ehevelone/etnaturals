@@ -25,7 +25,7 @@
     .stars { letter-spacing:2px; }
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
-    .meta { font-size:12px; color:#muted; }
+    .meta { font-size:12px; color:var(--muted); } /* fixed */
     .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
 
     /* Modal form */
@@ -174,35 +174,20 @@
   // ============================
 
   // Max file size in MB (keep small since we'll send base64)
-  // Max file size in MB (keep small since we'll send base64)
-const MAX_IMAGE_MB = 2;
-const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
-
-function fileToDataURL(file) {
-  return new Promise((resolve, reject) => {
-    if (!file) return resolve(null);
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return reject(new Error("Please upload JPG, PNG, or WEBP (HEIC isn’t supported)."));
-    }
-    const sizeMb = file.size / (1024 * 1024);
-    if (sizeMb > MAX_IMAGE_MB) {
-      return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
-    }
-    const r = new FileReader();
-    r.onload = () => resolve(r.result);
-    r.onerror = () => reject(new Error("Could not read image file."));
-    r.readAsDataURL(file);
-  });
-}
-
+  const MAX_IMAGE_MB = 2;
+  const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
   // Read file as a data URL (e.g., "data:image/jpeg;base64,...")
   function fileToDataURL(file) {
     return new Promise((resolve, reject) => {
       if (!file) return resolve(null);
-      if (!/^image\//.test(file.type)) return reject(new Error("Please upload an image file."));
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return reject(new Error("Please upload JPG, PNG, or WEBP (HEIC isn’t supported)."));
+      }
       const sizeMb = file.size / (1024 * 1024);
-      if (sizeMb > MAX_IMAGE_MB) return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
+      if (sizeMb > MAX_IMAGE_MB) {
+        return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
+      }
       const r = new FileReader();
       r.onload = () => resolve(r.result);
       r.onerror = () => reject(new Error("Could not read image file."));
@@ -252,7 +237,7 @@ function fileToDataURL(file) {
 
   function escapeHTML(s){
     return String(s).replace(/[&<>"']/g, m => (
-      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
     ));
   }
 
@@ -337,7 +322,7 @@ function fileToDataURL(file) {
     );
   }
 
-  // === Submit handler + preview (Apps Script + Drive, writes straight to Approved) ===
+  // === Submit handler + preview (FormData + no-cors) ===
   document.addEventListener('DOMContentLoaded', () => {
     const form  = document.getElementById('reviewForm');
     const modal = document.getElementById('formModal');
@@ -352,6 +337,10 @@ function fileToDataURL(file) {
         if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
         else { prev.removeAttribute('src'); prev.style.display = 'none'; }
       });
+      prev.onerror = () => {
+        prev.removeAttribute('src'); prev.style.display = 'none';
+        alert('Preview failed. Please upload a JPG, PNG, or WEBP (no HEIC).');
+      };
     }
 
     // Secondary cancel button
@@ -369,24 +358,32 @@ function fileToDataURL(file) {
       const file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
 
       try {
-        // convert optional photo to data URL (base64)
-        const image_data_url = await fileToDataURL(file);
+        // validate + convert optional photo to data URL
+        let image_data_url = '';
+        if (file) image_data_url = await fileToDataURL(file);
 
-        // send to your Apps Script Web App
-        const payload = { name, loc, rating, text, image_data_url };
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec", {
+        // Build FormData (no headers)
+        const fd = new FormData();
+        fd.append('name', name);
+        fd.append('loc', loc);
+        fd.append('rating', rating);
+        fd.append('text', text);
+        if (image_data_url) fd.append('image_data_url', image_data_url);
+
+        // Post without CORS preflight; server receives it fine
+        await fetch("https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          mode: "no-cors",
+          body: fd
         });
 
-        if (!res.ok) throw new Error("Could not submit review.");
         alert("Thanks! Your review was submitted.");
         form.reset();
         if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
         modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
-        // Reload approved list after a short delay (to allow Sheet write to publish)
-        setTimeout(() => { document.getElementById('approved').innerHTML = ''; loadCSV(CSV_URL_APPROVED, mountApproved); }, 1000);
+
+        // Reload approved list after a short delay (CSV publish may lag briefly)
+        setTimeout(() => { document.getElementById('approved').innerHTML = ''; loadCSV(CSV_URL_APPROVED, mountApproved); }, 1200);
       } catch (err) {
         alert(err.message || "Something went wrong.");
       }

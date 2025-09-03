@@ -26,6 +26,7 @@
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
     .meta { font-size:12px; color:var(--muted); }
+    .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
 
     /* Modal form */
     .open-form { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:10px 14px; border-radius:10px; cursor:pointer; }
@@ -36,7 +37,14 @@
     .modal-head h3 { margin:0; font-size:16px; }
     .modal-close { appearance:none; background:transparent; color:var(--text); border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
     .modal-body { padding:0; }
-    .form-embed { display:block; width:100%; height:80vh; border:0; }
+
+    /* Modal form fields */
+    .form { padding:14px; display:grid; gap:10px; }
+    .form input, .form select, .form textarea {
+      width:100%; background:#0f1012; border:1px solid var(--stroke);
+      color:var(--text); border-radius:10px; padding:10px;
+    }
+    .form button { cursor:pointer; }
 
     /* Staff review section */
     .review { border:1px dashed #3a3f46; background:#101114; }
@@ -72,6 +80,7 @@
 
     <!-- Approved (curated + live from sheet) -->
     <section class="grid cols-2" id="approved">
+      <!-- Example seed cards (keep or remove) -->
       <article class="card t">
         <div class="who">
           <div class="avatar">M</div>
@@ -130,11 +139,37 @@
         <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
       </div>
       <div class="modal-body">
-        <iframe
-          class="form-embed"
-          src="https://docs.google.com/forms/d/e/1FAIpQLSckcHQRCAihKWfKqNHC_YyoSFIwjJw335JUQPMuEZmqIPcP5w/viewform?embedded=true"
-          loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-        >Loading…</iframe>
+        <!-- Inline form replaces Google Form embed -->
+        <form id="reviewForm" class="form">
+          <div class="row" style="gap:10px">
+            <div style="flex:1;min-width:200px">
+              <label for="reviewName">Name</label>
+              <input id="reviewName" type="text" placeholder="Your name" required>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <label for="reviewLoc">City, State (optional)</label>
+              <input id="reviewLoc" type="text" placeholder="e.g., Omaha, NE">
+            </div>
+          </div>
+
+          <label for="reviewRating">Rating</label>
+          <select id="reviewRating" required>
+            <option value="" selected disabled>Select…</option>
+            <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+          </select>
+
+          <label for="reviewText">Your experience</label>
+          <textarea id="reviewText" rows="4" placeholder="What did you think?" required></textarea>
+
+          <label for="reviewPhoto">Photo (optional)</label>
+          <input id="reviewPhoto" type="file" accept="image/*">
+          <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
+
+          <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
+            <button class="open-form" type="submit">Submit</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
@@ -146,7 +181,7 @@
       <a href="about.html">About</a>
       <a href="testimonials.html">Testimonials</a>
       <a href="index.html#ingredients">Ingredients</a>
-      <a href="index.html#faq">FAQ</a>
+      <a href="faq.html">FAQ</a>
       <a href="order.html">Checkout</a>
     </div>
     <div class="legal">© <span id="year"></span> ET Naturals</div>
@@ -159,6 +194,11 @@
   const REVIEW_PIN = '2468';
   const SHEET_LINK = 'PASTE_FULL_GOOGLE_SHEET_LINK_HERE';
   // =============================
+  // ===== Image upload config (Cloudinary) =====
+  const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
+  const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_PRESET"; // unsigned preset
+  const MAX_FILE_MB = 3;
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
   document.getElementById('year').textContent = new Date().getFullYear();
   if (SHEET_LINK && !SHEET_LINK.startsWith('PASTE_')) {
@@ -216,7 +256,7 @@
 
   function escapeHTML(s){
     return String(s).replace(/[&<>"']/g, m => (
-      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]
     ));
   }
 
@@ -225,7 +265,7 @@
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
 
-  // tolerate header variations (e.g., "Full Name" OR "Name", "Your testimonial" OR "Testimonial", etc.)
+  // tolerate header variations (e.g., "Full Name" OR "Name", etc.)
   function findCol(head, candidates){
     const norm = s => s.toLowerCase().replace(/\s+/g,' ').trim();
     const H = head.map(norm);
@@ -261,20 +301,24 @@
       name:   findCol(head, ['Full Name','Name']),
       loc:    findCol(head, ['City, State','City / State','City','Location']),
       rating: findCol(head, ['Rating','Stars','Star Rating']),
-      msg:    findCol(head, ['Your Testimonial','Testimonial','Your Experience','Review','Comment','Message','Feedback'])
+      msg:    findCol(head, ['Your Testimonial','Testimonial','Your Experience','Review','Comment','Message','Feedback']),
+      img:    findCol(head, ['Image URL','image_url','Photo','Image'])
     };
     return rows.slice(1).map(r => ({
       name:   (idx.name>=0? r[idx.name] : '').trim(),
       loc:    (idx.loc >=0? r[idx.loc]  : '').trim(),
       rating: (idx.rating>=0? r[idx.rating] : '5').trim(),
-      msg:    (idx.msg >=0? r[idx.msg]  : '').trim()
+      msg:    (idx.msg >=0? r[idx.msg]  : '').trim(),
+      img:    (idx.img >=0? r[idx.img]  : '').trim()
     })).filter(x => x.name && x.msg);
   }
 
   function cardHTML(t){
     const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+    const photo = t.img ? `<img class="review-photo" src="${escapeHTML(t.img)}" alt="Customer photo" loading="lazy">` : '';
     return `
       <article class="card t">
+        ${photo}
         <div class="who">
           <div class="avatar">${escapeHTML(initial)}</div>
           <div>
@@ -302,6 +346,95 @@
     const mount = document.getElementById('pending');
     mount.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="muted">No pending submissions.</div>`;
   }
+
+  // Upload selected image to Cloudinary and return its HTTPS URL
+  async function uploadReviewPhoto(file) {
+    if (!file) return null; // no photo attached
+
+    // Basic validation
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      throw new Error("Please upload a JPG, PNG, or WEBP image.");
+    }
+    const sizeMb = file.size / (1024 * 1024);
+    if (sizeMb > MAX_FILE_MB) {
+      throw new Error(`Image must be ≤ ${MAX_FILE_MB} MB.`);
+    }
+
+    const endpoint = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    fd.append("folder", "reviews"); // optional; remove if you don't want a folder
+
+    const res = await fetch(endpoint, { method: "POST", body: fd });
+    if (!res.ok) {
+      try { await res.text(); } catch (_) {}
+      throw new Error("Upload failed. Try a smaller image or a different file.");
+    }
+
+    const data = await res.json();
+    if (!data.secure_url) {
+      throw new Error("Upload succeeded but no URL returned.");
+    }
+    return data.secure_url;
+  }
+
+  // === Submit handler + preview ===
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('reviewForm');
+    const modal = document.getElementById('formModal');
+    if (!form) return;
+
+    // Live image preview
+    const photoInput = document.getElementById('reviewPhoto');
+    const prev = document.getElementById('photoPreview');
+    if (photoInput && prev) {
+      photoInput.addEventListener('change', () => {
+        const f = photoInput.files?.[0];
+        if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+        else { prev.removeAttribute('src'); prev.style.display = 'none'; }
+      });
+    }
+
+    // Secondary cancel button
+    const close2 = document.getElementById('closeFormBtn2');
+    if (close2) close2.addEventListener('click', () => {
+      modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name   = document.getElementById('reviewName')?.value?.trim() || '';
+      const loc    = document.getElementById('reviewLoc')?.value?.trim() || '';
+      const rating = document.getElementById('reviewRating')?.value || '';
+      const text   = document.getElementById('reviewText')?.value?.trim() || '';
+      const file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
+
+      try {
+        // 1) Upload optional photo to Cloudinary
+        const imageUrl = await uploadReviewPhoto(file);
+
+        // 2) Send to your Apps Script (add 'Location' & 'image_url' columns)
+        const payload = { name, loc, rating, text, image_url: imageUrl || '' };
+
+        // TODO: replace with your deployed Apps Script Web App URL
+        const res = await fetch("YOUR_APPS_SCRIPT_WEB_APP_URL", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error("Could not submit review.");
+        alert("Thanks! Your review was submitted for approval.");
+        form.reset();
+        if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
+        modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+      } catch (err) {
+        alert(err.message || "Something went wrong.");
+      }
+    });
+  });
   </script>
 </body>
 </html>

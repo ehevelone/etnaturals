@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Customer Testimonials — ET Naturals</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    a { color:var(--accent); text-decoration:none; }
+    header { max-width:920px; margin:28px auto 0; padding:0 20px; display:flex; align-items:center; justify-content:space-between; }
+    header .brand { font-weight:800; letter-spacing:.3px; }
+    .wrap { max-width:920px; margin:18px auto 40px; padding:0 20px; display:grid; gap:20px; }
+    .card { background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); border:1px solid var(--stroke); }
+    h1 { margin:0 0 6px; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; gap:16px; }
+    @media(min-width:820px){ .grid.cols-2{ grid-template-columns:1fr 1fr; } }
+
+    /* Testimonial cards */
+    .t { display:grid; gap:8px; }
+    .who { display:flex; gap:10px; align-items:center; }
+    .avatar { width:40px; height:40px; border-radius:999px; background:#0f1012; border:1px solid var(--stroke); display:grid; place-items:center; font-weight:800; }
+    .stars { letter-spacing:2px; }
+    .stars .on { color:#FFD140; }
+    .quote { color:#dfe3e7; }
+    .meta { font-size:12px; color:var(--muted); }
+
+    /* Form embed */
+    iframe.form-embed { background:#0f1012; border:1px solid var(--stroke); border-radius:12px; width:100%; height:840px; }
+
+    /* Staff review section */
+    .review { border:1px dashed #3a3f46; background:#101114; }
+    .pill { display:inline-block; border:1px solid var(--stroke); background:#0f1012; border-radius:999px; padding:6px 10px; font-size:12px; color:#cfd6dc; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .btn { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:8px 12px; border-radius:10px; cursor:pointer; }
+    .hint { font-size:12px; color:#9aa3ae; }
+
+    /* Footer nav */
+    .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
+    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
+    .footer-nav .legal{ font-size:12px; opacity:.75; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><a href="index.html">ET NATURALS</a></div>
+    <nav class="muted"><a href="index.html#shop">Shop</a> • <a href="about.html">About</a> • <a href="order.html">Checkout</a></nav>
+  </header>
+
+  <main class="wrap">
+    <!-- Intro -->
+    <section class="card">
+      <h1>Customer Testimonials</h1>
+      <p class="muted">Real experiences from our community. New submissions are <b>reviewed</b> before they appear here.</p>
+    </section>
+
+    <!-- Approved (curated + live from sheet) -->
+    <section class="grid cols-2" id="approved">
+      <!-- Curated examples (keep or remove) -->
+      <article class="card t">
+        <div class="who">
+          <div class="avatar">M</div>
+          <div>
+            <div><b>Maria H.</b> <span class="meta">Austin, TX</span></div>
+            <div class="stars" aria-label="5 out of 5 stars"><span class="on">★★★★★</span></div>
+          </div>
+        </div>
+        <p class="quote">“Menopause hit and my scalp felt fussy. This kept my routine simple and my hair looks fuller.”</p>
+        <div class="meta">Used: Root Renewal</div>
+      </article>
+      <article class="card t">
+        <div class="who">
+          <div class="avatar">D</div>
+          <div>
+            <div><b>Denise P.</b> <span class="meta">Chicago, IL</span></div>
+            <div class="stars" aria-label="5 out of 5 stars"><span class="on">★★★★★</span></div>
+          </div>
+        </div>
+        <p class="quote">“Overnight routine, less breakage on my brush, and I like the rosemary/clove aroma.”</p>
+        <div class="meta">Used: Root Renewal</div>
+      </article>
+    </section>
+
+    <!-- Submit a testimonial (Google Form embed) -->
+    <section class="card" id="submit">
+      <h2 style="margin:0 0 6px">Share your experience</h2>
+      <p class="muted">Your words help others. Submissions are marked <span class="pill">Under review</span> and published after approval.</p>
+
+      <!-- Replace the src with your Google Form's Embed URL (Form → Send → <> Embed) -->
+      <iframe class="form-embed" src="YOUR_GOOGLE_FORM_EMBED_URL" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      <p class="hint">Prefer email? Write us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
+    </section>
+
+    <!-- Staff-only review list (shows with ?review=1&key=PIN) -->
+    <section class="card review" id="reviewBox" hidden>
+      <div class="row" style="justify-content:space-between;">
+        <h2 style="margin:0">Under Review <span class="pill">Staff</span></h2>
+        <div class="row">
+          <a id="openSheet" class="btn" target="_blank" rel="noopener">Open Moderation Sheet</a>
+          <span class="hint">Change <b>Status</b> to Approved or Declined in the Sheet.</span>
+        </div>
+      </div>
+      <div id="pending" class="grid cols-2" style="margin-top:14px"></div>
+    </section>
+
+    <section class="card">
+      <p class="muted">Cosmetic product. Individual experiences vary; no medical or therapeutic claims are made.</p>
+    </section>
+  </main>
+
+  <!-- Footer nav -->
+  <nav class="footer-nav">
+    <div class="links">
+      <a href="index.html#shop">Shop</a>
+      <a href="about.html">About</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </div>
+    <div class="legal">© <span id="year"></span> ET Naturals</div>
+  </nav>
+
+  <script>
+  // ====== CONFIGURE THESE ======
+  // Approved feed (✅ yours):
+  const CSV_URL_APPROVED = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLDBav_545GPz3w7ihMPN8YWqmZ0XGODHuI4A9OkrojMAbZlwEcOnOBQMMwF1ZI13eIzAc5ywrN1Jc/pub?gid=1688658905&single=true&output=csv';
+  // Pending feed (publish your Pending tab as CSV and paste URL here)
+  const CSV_URL_PENDING  = 'PASTE_PENDING_TAB_CSV_URL_HERE';
+  // Simple PIN for staff review view (?review=1&key=PIN)
+  const REVIEW_PIN = '2468';
+  // Link to the full Google Sheet for quick access
+  const SHEET_LINK = 'PASTE_FULL_GOOGLE_SHEET_LINK_HERE';
+  // =============================
+
+  document.getElementById('year').textContent = new Date().getFullYear();
+  document.getElementById('openSheet').href = SHEET_LINK;
+
+  // Show staff review if URL says so
+  (function(){
+    const q = new URLSearchParams(location.search);
+    const show = q.get('review') === '1';
+    const key  = q.get('key') || '';
+    if (show && key === REVIEW_PIN && !CSV_URL_PENDING.startsWith('PASTE_')) {
+      document.getElementById('reviewBox').hidden = false;
+      loadCSV(CSV_URL_PENDING, mountPending);
+    }
+  })();
+
+  // Load approved (public)
+  loadCSV(CSV_URL_APPROVED, mountApproved);
+
+  // --- CSV helpers ---
+  function parseCSV(text){
+    const rows = [];
+    let row = [], cell = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++){
+      const ch = text[i], next = text[i+1];
+      if (inQuotes){
+        if (ch === '"' && next === '"'){ cell += '"'; i++; }
+        else if (ch === '"'){ inQuotes = false; }
+        else { cell += ch; }
+      } else {
+        if (ch === '"'){ inQuotes = true; }
+        else if (ch === ','){ row.push(cell); cell=''; }
+        else if (ch === '\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
+        else if (ch === '\r'){ /* skip */ }
+        else { cell += ch; }
+      }
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+  function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function starHTML(n){
+    n = Number(n)||0; n = Math.max(1, Math.min(5, n));
+    return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
+  }
+  function loadCSV(url, cb){
+    if(!url || url.startsWith('PASTE_')) return;
+    fetch(url, { cache:'no-store' })
+      .then(r => r.text())
+      .then(t => cb(parseCSV(t)))
+      .catch(() => {/* silent */});
+  }
+  function mapRows(rows){
+    if (!rows || !rows.length) return [];
+    const head = rows[0].map(h => h.trim().toLowerCase());
+    const idx = {
+      name: head.indexOf('full name'),
+      loc:  head.indexOf('city, state'),
+      rating: head.indexOf('rating'),
+      msg: head.indexOf('your testimonial')
+    };
+    return rows.slice(1).map(r => ({
+      name: (idx.name>=0? r[idx.name] : '').trim(),
+      loc:  (idx.loc >=0? r[idx.loc]  : '').trim(),
+      rating: (idx.rating>=0? r[idx.rating] : '5').trim(),
+      msg:  (idx.msg >=0? r[idx.msg]  : '').trim()
+    })).filter(x => x.name && x.msg);
+  }
+  function cardHTML(t){
+    const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+    return `
+      <article class="card t">
+        <div class="who">
+          <div class="avatar">${escapeHTML(initial)}</div>
+          <div>
+            <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+            <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+          </div>
+        </div>
+        <p class="quote">“${escapeHTML(t.msg)}”</p>
+        <div class="meta">Used: Root Renewal</div>
+      </article>
+    `;
+  }
+  function mountApproved(rows){
+    const list = mapRows(rows);
+    if(!list.length) return;
+    const mount = document.getElementById('approved');
+    mount.insertAdjacentHTML('beforeend', list.map(cardHTML).join(''));
+  }
+  function mountPending(rows){
+    const list = mapRows(rows);
+    const mount = document.getElementById('pending');
+    mount.innerHTML = list.length ? list.map(cardHTML).join('') : `<div class="muted">No pending submissions.</div>`;
+  }
+  </script>
+</body>
+</html>

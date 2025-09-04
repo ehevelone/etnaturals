@@ -112,55 +112,61 @@
     </section>
   </main>
 
-  <!-- Modal -->
-  <div class="modal" id="formModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
-    <div class="modal-dialog">
-      <div class="modal-head">
-        <h3 id="formModalTitle">Share your experience</h3>
-        <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
-      </div>
-      <div class="modal-body">
-        <!-- Hidden iframe to keep page in place -->
-        <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
+<!-- Modal -->
+<div class="modal" id="formModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+  <div class="modal-dialog">
+    <div class="modal-head">
+      <h3 id="formModalTitle">Share your experience</h3>
+      <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
+    </div>
+    <div class="modal-body">
+      <!-- Hidden iframe to keep page in place -->
+      <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
 
-        <!-- Inline form: posts directly to Apps Script (no CORS) -->
-        <form id="reviewForm" class="form"
-              action="https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec"
-              method="POST" target="submitSink" enctype="multipart/form-data" novalidate>
-          <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+      <!-- Inline form: posts directly to Apps Script (no CORS) -->
+      <form id="reviewForm" class="form"
+            action="https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec"
+            method="POST"
+            target="submitSink"
+            accept-charset="UTF-8"
+            novalidate>
+        <!-- base64 image goes here before submit -->
+        <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
 
-          <div class="row" style="gap:10px">
-            <div style="flex:1;min-width:200px">
-              <label for="reviewName">Name</label>
-              <input id="reviewName" name="name" type="text" placeholder="Your name" required>
-            </div>
-            <div style="flex:1;min-width:200px">
-              <label for="reviewLoc">City, State (optional)</label>
-              <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
-            </div>
+        <div class="row" style="gap:10px">
+          <div style="flex:1;min-width:200px">
+            <label for="reviewName">Name</label>
+            <input id="reviewName" name="name" type="text" placeholder="Your name" required>
           </div>
-
-          <label for="reviewRating">Rating</label>
-          <select id="reviewRating" name="rating" required>
-            <option value="" selected disabled>Select…</option>
-            <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
-          </select>
-
-          <label for="reviewText">Your experience</label>
-          <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
-
-          <label for="reviewPhoto">Photo (optional)</label>
-          <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
-          <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
-
-          <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-            <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
-            <button class="open-form" type="submit" id="submitBtn">Submit</button>
+          <div style="flex:1;min-width:200px">
+            <label for="reviewLoc">City, State (optional)</label>
+            <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
           </div>
-        </form>
-      </div>
+        </div>
+
+        <label for="reviewRating">Rating</label>
+        <select id="reviewRating" name="rating" required>
+          <option value="" selected disabled>Select…</option>
+          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+        </select>
+
+        <label for="reviewText">Your experience</label>
+        <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
+
+        <label for="reviewPhoto">Photo (optional)</label>
+        <!-- no name= on purpose; we send base64 via hidden field -->
+        <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+        <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
+
+        <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+          <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
+          <button class="open-form" type="submit" id="submitBtn">Submit</button>
+        </div>
+      </form>
     </div>
   </div>
+</div>
+
 
   <!-- Footer nav -->
   <nav class="footer-nav">
@@ -384,5 +390,53 @@
     });
   });
   </script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form      = document.getElementById('reviewForm');
+  const fileInput = document.getElementById('reviewPhoto');
+  const imgHidden = document.getElementById('imageDataUrl');
+  const prev      = document.getElementById('photoPreview');
+  const sink      = document.getElementById('submitSink');
+
+  // Show a small preview when a file is chosen
+  fileInput?.addEventListener('change', () => {
+    const f = fileInput.files?.[0];
+    if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+    else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
+  });
+
+  // On submit: convert photo to text (base64) -> put into the hidden field -> really submit
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = fileInput.files?.[0] || null;
+    imgHidden.value = f ? await fileToDataURL(f) : '';  // if no photo, send empty
+    form.submit(); // posts to Apps Script via the hidden iframe (no CORS issues)
+  });
+
+  // When the hidden iframe finishes, show a message and clear everything
+  sink.addEventListener('load', () => {
+    alert('Thanks! Your review was submitted.');
+    form.reset();
+    prev.removeAttribute('src'); prev.style.display = 'none';
+    const modal = document.getElementById('formModal');
+    if (modal) { modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+  });
+
+  // Helper: turn the chosen file into base64 text (small, safe)
+  function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve('');
+      const okTypes = ['image/jpeg','image/png','image/webp'];
+      if (!okTypes.includes(file.type)) return reject(new Error('Use JPG, PNG, or WEBP.'));
+      if (file.size > 2 * 1024 * 1024) return reject(new Error('Image must be 2 MB or less.'));
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error('Could not read image.'));
+      r.readAsDataURL(file);
+    });
+  }
+});
+</script>
+
 </body>
 </html>

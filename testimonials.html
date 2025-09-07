@@ -26,7 +26,7 @@
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
     .meta { font-size:12px; color:var(--muted); }
-    .t img.review-photo { display:block; width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
+    .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
 
     /* Modal form */
     .open-form { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:10px 14px; border-radius:10px; cursor:pointer; }
@@ -38,25 +38,26 @@
     .modal-close { appearance:none; background:transparent; color:#f6f7f9; border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
     .modal-body { padding:0; }
 
-    /* Form fields */
+    /* Form */
     .form { padding:14px; display:grid; gap:10px; }
-    .form input, .form select, .form textarea {
+    .form input, .form textarea {
       width:100%; background:#0f1012; border:1px solid var(--stroke);
       color:var(--text); border-radius:10px; padding:10px;
     }
     .form button { cursor:pointer; }
 
-    /* Footer nav */
-    .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
-    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
-    .footer-nav a{ color:var(--text); opacity:.9; }
-    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
-    .footer-nav .legal{ font-size:12px; opacity:.75; }
-
     /* Star rating input (bigger + left aligned) */
-    .rating-stars { display:inline-flex; flex-direction:row-reverse; gap:8px; align-items:center; justify-content:flex-start; }
+    .rating-stars {
+      display:inline-flex;
+      flex-direction:row-reverse;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-start;
+    }
     .rating-stars input { position:absolute; left:-9999px; }
-    .rating-stars label { font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px; }
+    .rating-stars label {
+      font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px;
+    }
     .rating-stars label:hover,
     .rating-stars label:hover ~ label,
     .rating-stars input:checked ~ label { color:#FFD140; }
@@ -79,8 +80,9 @@
       <p class="muted">Real experiences from our community. New submissions appear after approval below.</p>
     </section>
 
-    <!-- Approved (seed examples + live from Apps Script) -->
+    <!-- Approved (live from sheet via Apps Script) -->
     <section class="grid cols-2" id="approved">
+      <!-- seed examples (keep/remove) -->
       <article class="card t">
         <div class="who">
           <div class="avatar">M</div>
@@ -105,7 +107,7 @@
       </article>
     </section>
 
-    <!-- Submit a testimonial -->
+    <!-- Submit a testimonial (opens modal) -->
     <section class="card" id="submit">
       <h2 style="margin:0 0 6px">Share your experience</h2>
       <p class="muted">Your words help others.</p>
@@ -132,7 +134,6 @@
         <form id="reviewForm" class="form"
               action="https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec"
               method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
-
           <input type="hidden" id="clientIp" name="ip" value="">
           <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
 
@@ -165,7 +166,6 @@
 
           <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
             <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
-            <!-- FORCE native submit (we fill base64 then call .submit()) -->
             <button class="open-form" type="submit" id="submitBtn"
               onclick="return (function(btn){
                 var f = btn.form;
@@ -188,6 +188,7 @@
     </div>
   </div>
 
+  <!-- Footer nav -->
   <nav class="footer-nav">
     <div class="links">
       <a href="index.html#shop">Shop</a>
@@ -201,9 +202,12 @@
   </nav>
 
   <script>
-  // ===== Approved feed from your Apps Script (private JSONP) =====
+  // ===== Apps Script feed (Approved) =====
   const JSONP_URL_APPROVED =
     'https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
+
+  const MAX_IMAGE_MB = 2;
+  const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
   // Year
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -223,14 +227,17 @@
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
   })();
 
-  // Helpers
+  /* ---------- helpers ---------- */
   function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    return String(s).replace(/[&<>"']/g, m => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+    ));
   }
   function starHTML(n){
     n = Number(n)||0; n = Math.max(1, Math.min(5, n));
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
+  // Normalize common Google Drive URLs into direct-view links
   function normalizeImgUrl(u){
     if (!u) return '';
     u = String(u).trim();
@@ -244,64 +251,26 @@
     return u;
   }
 
- /* --- Image URL normalizer (handles all common Google Drive formats) --- */
-function normalizeImgUrl(u){
-  if (!u) return '';
-  u = String(u).trim();
-
-  // /file/d/<id>/view...
-  let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
-  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-
-  // /open?id=<id>
-  m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
-  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-
-  // /uc? ... id=<id>  -> force export=view
-  m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
-  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-
-  // Newer CDN form: lh3.googleusercontent.com/d/<id>=...
-  m = u.match(/https?:\/\/lh\d\.googleusercontent\.com\/d\/([^=?#]+)/i);
-  if (m) return 'https://lh3.googleusercontent.com/d/' + m[1] + '=w1200';
-
-  // Folder links can’t be embedded
-  if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
-
-  return u; // already direct or other host
-}
-
-/* ---------- Render Approved items coming from Apps Script ---------- */
-function itemCardHTML(t){
-  const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-  const imgUrl  = String(t.img || '').trim(); // use as-is (your Apps Script already writes uc?export=view&id=...)
-  
-  // Keep the <img>; if it fails, just hide it (so you still see a placeholder first)
-  const photo = imgUrl
-    ? `<img class="review-photo"
-            src="${escapeHTML(imgUrl)}"
-            alt="Customer photo"
-            loading="lazy" decoding="async"
-            onerror="console.warn('Image failed:', this.src); this.style.display='none';">`
-    : '';
-
-  return `
-    <article class="card t">
-      ${photo}
-      <div class="who">
-        <div class="avatar">${escapeHTML(initial)}</div>
-        <div>
-          <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
-          <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+  /* ---------- render Approved ---------- */
+  function itemCardHTML(t){
+    const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+    const img = normalizeImgUrl(t.img || '');
+    const photo = img ? `<img class="review-photo" src="${escapeHTML(img)}" alt="Customer photo" loading="lazy" onerror="this.remove()">` : '';
+    return `
+      <article class="card t">
+        ${photo}
+        <div class="who">
+          <div class="avatar">${escapeHTML(initial)}</div>
+          <div>
+            <div><b>${escapeHTML(t.name||'')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+            <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+          </div>
         </div>
-      </div>
-      <p class="quote">“${escapeHTML(t.msg)}”</p>
-      <div class="meta">Used: Root Renewal</div>
-    </article>
-  `;
-}
-
-
+        <p class="quote">“${escapeHTML(t.msg||'')}”</p>
+        <div class="meta">Used: Root Renewal</div>
+      </article>
+    `;
+  }
 
   // JSONP callback (must be global)
   window.ETN_mountApproved = function(resp){
@@ -314,7 +283,7 @@ function itemCardHTML(t){
     );
   };
 
-  // Load Approved (adds cache-buster)
+  // Fetch Approved via JSONP (with cache-buster)
   function fetchApprovedJSONP(){
     const old = document.getElementById('approvedJsonpTag');
     if (old) old.remove();
@@ -333,7 +302,7 @@ function itemCardHTML(t){
   }
   fetchApprovedJSONP();
 
-  // Preview + tidy after submit (hidden iframe)
+  /* ---------- preview + tidy after submit ---------- */
   (function(){
     const fileInput = document.getElementById('reviewPhoto');
     const prev      = document.getElementById('photoPreview');
@@ -361,16 +330,16 @@ function itemCardHTML(t){
   })();
   </script>
 
-  <!-- Optional: client IP fill -->
+  <!-- client IP filler (optional rate-limit signal) -->
   <script>
-  (function fillClientIp(){
-    const f = document.getElementById('clientIp');
-    if (!f) return;
-    fetch('https://api.ipify.org?format=json')
-      .then(r => r.json())
-      .then(d => { f.value = d.ip || ''; })
-      .catch(() => {});
-  })();
+    (function fillClientIp(){
+      const f = document.getElementById('clientIp');
+      if (!f) return;
+      fetch('https://api.ipify.org?format=json')
+        .then(r => r.json())
+        .then(d => { f.value = d.ip || ''; })
+        .catch(() => {});
+    })();
   </script>
 </body>
 </html>

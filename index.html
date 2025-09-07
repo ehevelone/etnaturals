@@ -1,223 +1,268 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <title>ET Naturals — Healthy scalp, better hair</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ET Naturals — Root Renewal | Herbal Hair & Scalp Treatment</title>
-  <meta name="description" content="ET Naturals Root Renewal — small-batch herbal hair & scalp treatment with Castor, Batana, Rosemary, and Clove oils. Nourish roots, support healthy hair, and simplify care with subscription." />
-  <meta name="theme-color" content="#215033" />
+  <meta name="description" content="Simple, natural haircare focused on a healthy scalp: growth-supporting oils, gentle cleansers, and shine-boosting care." />
 
-  <!-- Favicons (relative so they work locally & on Netlify) -->
-  <link rel="icon" type="image/png" href="images/favicon.png">
-  <link rel="icon" type="image/png" href="images/favicon.png?v=2" sizes="32x32">
+  <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA; --blue:#1b3f73;
+    }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; background:var(--beige); color:var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.55;
+    }
+    a{ color:var(--green); text-decoration:none }
+    img{ max-width:100%; display:block }
 
-  <!-- Social (absolute URLs are fine) -->
-  <meta property="og:type" content="product">
-  <meta property="og:title" content="ET Naturals — Root Renewal">
-  <meta property="og:description" content="Small-batch herbal hair & scalp treatment with castor, batana, rosemary, and clove oils. Subscribe $14.99 or buy once $19.99.">
-  <meta property="og:image" content="https://www.etnaturals.com/images/root-renewal-hero.jpg">
-  <meta property="og:url" content="https://www.etnaturals.com/">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ET Naturals — Root Renewal">
-  <meta name="twitter:description" content="Small-batch herbal hair & scalp treatment.">
-  <meta name="twitter:image" content="https://www.etnaturals.com/images/root-renewal-hero.jpg">
+    /* Header (right-aligned nav) */
+    header.site-header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(240,233,218,.9);
+      backdrop-filter:saturate(120%) blur(6px);
+      border-bottom:1px solid #0002;
+    }
+    .container{ max-width:1100px; margin:0 auto; padding:18px 20px; }
+    .logo-img{ height:60px; width:auto }
+    .site-header .container{
+      display:flex; align-items:center; gap:16px;
+    }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+      font-weight:600;
+    }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    /* Layout & cards */
+    .hero{ display:grid; gap:26px; padding:56px 20px }
+    @media (min-width:900px){
+      .hero{ grid-template-columns:1.05fr .95fr; align-items:center }
+    }
+    .card{
+      background:rgba(255,255,255,.65);
+      border:1px solid #0002; border-radius:16px;
+      box-shadow:0 12px 28px rgba(0,0,0,.08);
+    }
+    .pad{ padding:24px }
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(28px,4vw,46px); line-height:1.1; margin:0;
+    }
+    .subtitle{ margin:8px 0 16px; color:var(--brown); font-weight:600 }
+    .badge{ display:inline-block; background:var(--green); color:#fff; padding:6px 10px; border-radius:999px; font-size:13px; font-weight:700; letter-spacing:.4px }
+    .cta{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px }
+    .btn{
+      appearance:none; border:none; border-radius:999px; padding:12px 18px; font-weight:800; cursor:pointer
+    }
+    .btn-primary{ background:var(--green); color:#fff }
+    .btn-secondary{ background:#fff; color:var(--green); border:2px solid var(--green) }
+    .list{ padding-left:18px; margin:14px 0 0; color:#33473d }
 
+    .grid{ display:grid; gap:16px; padding:0 20px 20px }
+    @media (min-width:900px){
+      .grid.cols-3{ grid-template-columns:repeat(3,1fr) }
+      .grid.cols-2{ grid-template-columns:repeat(2,1fr) }
+    }
+    h2.section{
+      font-family:"Playfair Display",serif; font-size:clamp(24px,3vw,34px);
+      margin:36px 20px 12px;
+    }
+    .product{ display:grid; gap:14px }
+    .shot{
+      aspect-ratio:4/3; border-radius:16px;
+      background:linear-gradient(135deg,#f7f2e6,#e9e1cf);
+      border:1px solid #0002; overflow:hidden;
+    }
+    .price{ font-size:28px; font-weight:800; color:var(--green) }
+    .fine{ font-size:12px; color:#436055; text-align:center; margin:18px 20px 0 }
 
-<style>
-  :root{--green:#215033;--brown:#6b4b3e;--ink:#0e1a14;--beige:#F0E9DA;--blue:#1b3f73}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--beige);color:var(--ink);font-family:Inter,system-ui,Arial,sans-serif;line-height:1.55}
-  a{color:var(--green);text-decoration:none}
+    /* Images */
+    .hero-img{
+      width:100%; height:auto; border-radius:16px; border:1px solid #0002;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
 
-  /* base layout */
-  .container{max-width:1100px;margin:auto;padding:20px}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo img{display:block}
-  .hero{display:grid;gap:26px;padding:56px 20px}
-  @media(min-width:900px){.hero{grid-template-columns:1.05fr .95fr;align-items:center}}
-  .card{background:rgba(255,255,255,.65);border:1px solid #0002;border-radius:16px;box-shadow:0 12px 28px rgba(0,0,0,.08)}
-  .pad{padding:24px}
-  .title{font-family:"Playfair Display",serif;font-size:clamp(28px,4vw,46px);line-height:1.1;margin:0}
-  .subtitle{margin:8px 0 16px;color:var(--brown);font-weight:600}
-  .badge{display:inline-block;background:var(--green);color:#fff;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:700;letter-spacing:.4px}
-  .muted{color:#33473d}
-  .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
-  .btn{appearance:none;border:none;border-radius:999px;padding:12px 18px;font-weight:800;cursor:pointer}
-  .btn-primary{background:var(--green);color:#fff}
-  .btn-secondary{background:#fff;color:var(--green);border:2px solid var(--green)}
-  .grid{display:grid;gap:16px}
-  @media(min-width:900px){
-    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
-    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
-  }
-  h2.section{font-family:"Playfair Display",serif;font-size:clamp(24px,3vw,34px);margin:36px 0 12px}
-  .product{display:grid;gap:14px}
-  .price{font-size:28px;font-weight:800;color:var(--green)}
-  .pill{display:inline-block;border:1px solid #0002;border-radius:999px;padding:6px 10px;background:#fff6}
-  .fine{font-size:12px;color:#436055}
-  .shot{aspect-ratio:4/3;border-radius:16px;background:linear-gradient(135deg,#f7f2e6,#e9e1cf);border:1px solid #0002;display:grid;place-items:center;color:#2d3a33;font-weight:800}
-  footer{margin-top:50px;border-top:1px solid #0002;background:rgba(255,255,255,.55)}
-  .list{padding-left:18px}
-  .switch{display:flex;gap:8px;align-items:center}
-  .switch input{accent-color:var(--green)}
-  .labelk{font-size:12px;color:#355448}
-  .hero-img{width:100%;height:auto;display:block;border-radius:16px;border:1px solid #0002;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-  .logo-img{display:block;height:60px;width:auto}
+    /* Footer */
+    footer{
+      margin-top:50px; border-top:1px solid #0002;
+      background:rgba(255,255,255,.55);
+    }
+    .footer-inner{
+      max-width:1100px; margin:0 auto; padding:16px 20px;
+      display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;
+      color:#2d3a33;
+    }
+    .footer-links{ display:flex; gap:14px; flex-wrap:wrap }
+    .footer-links a{ color:var(--green) }
+  </style>
+</head>
+<body>
 
-  /* sticky site header + right-aligned nav */
-  .site-header{
-    position:sticky;top:0;z-index:20;
-    background:rgba(240,233,218,.9);
-    backdrop-filter:saturate(120%) blur(6px);
-    border-bottom:1px solid #0002;
-  }
-  .site-header .container{
-    max-width:1100px;margin:0 auto;padding:20px;
-    display:flex;align-items:center;gap:16px;
-  }
-  .site-header .nav{
-    display:flex;flex-wrap:wrap;gap:14px;
-    margin-left:auto;justify-content:flex-end;text-align:right;
-  }
-  .site-header .nav a{
-    font-weight:600;color:var(--green);text-decoration:none;
-  }
-  .site-header .nav a:hover{ text-decoration:underline; }
-</style>
+  <!-- Header (shared pattern, right-aligned nav) -->
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand" aria-label="ET Naturals — Home">
+        <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
+             onerror="this.onerror=null;this.src='images/logo.png'">
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#shop">Order</a>
+        <a href="about.html">Our Story</a>
+        <a href="#ingredients">Ingredients</a>
+        <a href="faq.html">FAQ</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="order.html">Checkout</a>
+      </nav>
+    </div>
+  </header>
 
-<header class="site-header">
-  <div class="container">
-    <a href="index.html" class="brand">
-      <img
-        src="images/et-naturals-logo.png"
-        alt="ET Naturals Logo"
-        class="logo-img"
-        onerror="this.onerror=null;this.src='images/logo.png'">
-    </a>
-    <nav class="nav">
-      <a href="index.html#shop">Order</a>
-      <a href="about.html">Our Story</a>
-      <a href="index.html#ingredients">Ingredients</a>
-      <a href="faq.html">FAQ</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="order.html">Checkout</a>
-    </nav>
-  </div>
-</header>
-
-
+  <!-- ===== MAIN ===== -->
   <main>
-    <section class="container hero">
+
+    <!-- HERO (brand-first) -->
+    <section class="hero">
       <div class="card pad">
-        <span class="badge">Small-batch • Made in USA</span>
-        <h1 class="title" style="margin-top:10px">Root Renewal</h1>
-        <div class="subtitle">Herbal Hair &amp; Scalp Treatment — 4 FL OZ (118 mL)</div>
-        <p>Crafted with <b>Ricinus Communis (Castor) Seed Oil</b>, <b>Elaeis Oleifera Kernel (Batana) Oil</b>, <b>Rosmarinus Officinalis (Rosemary) Leaf Oil</b>, and <b>Syzygium Aromaticum (Clove) Bud Oil</b> to support healthy-looking hair and a comfortable scalp.</p>
+        <span class="badge">ET Naturals</span>
+        <h1 class="title">Healthy scalp → better hair.</h1>
+        <p class="subtitle">Simple, natural formulas that support growth, reduce breakage, and bring back shine.</p>
+
         <div class="cta">
-          <a class="btn btn-primary" href="#shop" role="button">Subscribe — $14.99</a>
-          <a class="btn btn-secondary" href="#shop" role="button">Buy Once — $19.99</a>
+          <a class="btn btn-primary" href="#shop">Shop products</a>
+          <a class="btn btn-secondary" href="testimonials.html">Read testimonials</a>
         </div>
-        <p class="muted" style="margin-top:10px;font-size:13px">Cosmetic product. No drug claims. Results vary.</p>
+
+        <ul class="list">
+          <li>Small-batch, plant-forward ingredients</li>
+          <li>No parabens, phthalates, or dyes</li>
+          <li>Ships from Omaha, NE (3–5 business days)</li>
+        </ul>
       </div>
 
-<img
-  src="images/root-renewal-hero.jpg"
-  alt="ET Naturals Root Renewal — 4 oz herbal hair & scalp oil"
-  class="hero-img"
-  width="768" height="768">
-
-
-    </section>
-
-    <section id="benefits" class="container">
-      <h2 class="section">Why it works</h2>
-      <div class="grid cols-3">
-        <div class="card pad spec"><div><b>Castor (Ricinus)</b><br/><span class="muted">Rich in fatty acids for slip & shine.</span></div></div>
-        <div class="card pad spec"><div><b>Batana (Elaeis Oleifera)</b><br/><span class="muted">Beloved in traditional care rituals.</span></div></div>
-        <div class="card pad spec"><div><b>Rosemary & Clove</b><br/><span class="muted">Herbal aromatics for a fresh scalp feel.</span></div></div>
+      <div class="card pad" style="display:grid;place-items:center">
+        <img
+          class="hero-img"
+          src="images/hero-collection.jpg"
+          alt="ET Naturals product collection"
+          onerror="this.onerror=null;this.src='images/hero-fallback.jpg'">
       </div>
     </section>
 
-    <section id="ingredients" class="container">
-      <h2 class="section">Ingredients (INCI)</h2>
-      <div class="card pad">
-        <p><b>Ingredients:</b> Aqua (Water), Ricinus Communis (Castor) Seed Oil, Elaeis Oleifera Kernel Oil, Rosmarinus Officinalis (Rosemary) Leaf Oil, Syzygium Aromaticum (Clove) Bud Oil, Fragrance (Parfum).</p>
-        <p class="muted" style="font-size:13px">Listed in descending order by weight. Essential oil/fragrance disclosed per cosmetic guidelines.</p>
-      </div>
-    </section>
+    <!-- BESTSELLERS -->
+    <h2 id="bestsellers" class="section">Bestsellers</h2>
+    <section class="grid cols-3">
 
-    <section id="howto" class="container">
-      <h2 class="section">Directions</h2>
-      <div class="card pad">
-        <ol>
-          <li>Shake very well. Apply <span class="kbd">1–2 mL</span> (about <span class="kbd">1–2 full droppers</span>) to scalp.</li>
-          <li>Work into scalp and hair. Leave on for at least <span class="kbd">1 hour</span> (founder leaves for <span class="kbd">12 hours</span>).</li>
-          <li>Wash hair as usual.</li>
-        </ol>
-        <p class="muted" style="font-size:13px">For external use only. Avoid contact with eyes. If irritation occurs, discontinue use. Keep out of reach of children.</p>
-      </div>
-    </section>
-
-    <section id="shop" class="container">
-      <h2 class="section">Shop Root Renewal</h2>
-      <div class="grid cols-3">
-        <div class="card pad">
-          <div class="pill">Autoship</div>
-          <h3 style="margin:.4rem 0">Subscription</h3>
-          <div class="price">$14.99</div>
-          <p class="muted">Cancel anytime. Ships every 30 days by default.</p>
-          <a class="btn btn-primary" href="order.html?plan=subscribe" aria-label="Start subscription checkout">Start Subscription</a>
+      <!-- Product card 1 -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/products/root-renewal.jpg" alt="Root Renewal"
+               style="width:100%;height:100%;object-fit:cover"
+               onerror="this.onerror=null;this.src='images/placeholder.jpg'">
         </div>
-        <div class="card pad">
-          <div class="pill">One-Time</div>
-          <h3 style="margin:.4rem 0">Single Bottle</h3>
-          <div class="price">$19.99</div>
-          <p class="muted">4 fl oz (118 mL) — small-batch crafted.</p>
-          <a class="btn btn-secondary" href="order.html?plan=onetime" aria-label="Buy single bottle">Buy Now</a>
+        <h3 style="margin:8px 0 4px">Root Renewal</h3>
+        <p class="fine" style="margin:0;color:#355448">Lightweight scalp serum for fuller-looking hair.</p>
+        <div class="price" style="margin-top:8px">$29</div>
+        <div class="cta">
+          <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
+          <a class="btn btn-secondary" href="root-renewal.html">Details</a>
         </div>
-        <div class="card pad">
-          <div class="pill">Bundle</div>
-          <h3 style="margin:.4rem 0">3-Pack Value</h3>
-          <div class="price">$54.99</div>
-          <p class="muted">Save on multi-month supply.</p>
-          <a class="btn btn-secondary" href="order.html?plan=bundle" aria-label="Buy bundle">Add Bundle</a>
+      </article>
+
+      <!-- Product card 2 -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/products/clarifying-rinse.jpg" alt="Clarifying Rinse"
+               style="width:100%;height:100%;object-fit:cover"
+               onerror="this.onerror=null;this.src='images/placeholder.jpg'">
         </div>
-      </div>
-      <p class="muted" style="margin-top:10px;font-size:13px">Prices shown are MSRP; taxes & shipping calculated at checkout.</p>
+        <h3 style="margin:8px 0 4px">Clarifying Rinse</h3>
+        <p class="fine" style="margin:0;color:#355448">Gently removes buildup for a fresh, clean scalp.</p>
+        <div class="price" style="margin-top:8px">$22</div>
+        <div class="cta">
+          <a class="btn btn-primary" href="order.html?sku=clarifying-rinse">Add to cart</a>
+          <a class="btn btn-secondary" href="#shop">Details</a>
+        </div>
+      </article>
+
+      <!-- Product card 3 -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/products/nourish-shampoo.jpg" alt="Nourishing Shampoo"
+               style="width:100%;height:100%;object-fit:cover"
+               onerror="this.onerror=null;this.src='images/placeholder.jpg'">
+        </div>
+        <h3 style="margin:8px 0 4px">Nourishing Shampoo</h3>
+        <p class="fine" style="margin:0;color:#355448">Creamy lather, soft finish, scalp-friendly pH.</p>
+        <div class="price" style="margin-top:8px">$24</div>
+        <div class="cta">
+          <a class="btn btn-primary" href="order.html?sku=nourish-shampoo">Add to cart</a>
+          <a class="btn btn-secondary" href="#shop">Details</a>
+        </div>
+      </article>
+
     </section>
 
+    <!-- FULL SHOP (extend freely) -->
+    <h2 id="shop" class="section">Shop all products</h2>
+    <section class="grid cols-3">
+
+      <!-- Example product -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/products/growth-oil.jpg" alt="Growth Oil"
+               style="width:100%;height:100%;object-fit:cover"
+               onerror="this.onerror=null;this.src='images/placeholder.jpg'">
+        </div>
+        <h3 style="margin:8px 0 4px">Growth Oil</h3>
+        <p class="fine" style="margin:0;color:#355448">Daily dropper blend with rosemary + clove.</p>
+        <div class="price" style="margin-top:8px">$26</div>
+        <div class="cta">
+          <a class="btn btn-primary" href="order.html?sku=growth-oil">Add to cart</a>
+          <a class="btn btn-secondary" href="faq.html">FAQ</a>
+        </div>
+      </article>
+
+      <!-- Duplicate the card above for more products… -->
+      <!-- ... -->
+
+    </section>
+
+    <!-- Ingredients anchor (lightweight section so the header link isn’t dead) -->
+    <h2 id="ingredients" class="section">Ingredients</h2>
+    <section class="grid cols-2" style="padding-bottom:32px">
+      <article class="card pad">
+        <h3 style="margin:0 0 8px">Plant-forward & simple</h3>
+        <p class="fine" style="margin:0;color:#355448">
+          We focus on a short list of effective botanicals—rosemary, clove, aloe, and lightweight carriers—
+          and avoid parabens, phthalates, dyes, and heavy silicones.
+        </p>
+      </article>
+      <article class="card pad">
+        <h3 style="margin:0 0 8px">Sensitive-scalp friendly</h3>
+        <p class="fine" style="margin:0;color:#355448">
+          Balanced formulations that are gentle enough for routine use. Patch test first and discontinue if irritation occurs.
+        </p>
+      </article>
+    </section>
+
+    <p class="fine">Cosmetic products. Individual results vary; no medical claims are made.</p>
   </main>
 
+  <!-- Footer -->
   <footer>
-    <div class="container" style="display:grid;gap:10px">
-      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between">
-        <div class="brand">
-          <div class="logo" aria-hidden="true">ET</div>
-          <div>
-            <div style="font-weight:800">ET NATURALS</div>
-            <div class="muted" style="font-size:12px">growth powered by nature</div>
-          </div>
-        </div>
-        <div class="legal">
-          Distributed by ET Naturals • <a href="https://www.etnaturals.com/">etnaturals.com</a>
-        </div>
-      </div>
-      <div class="legal">
-        <!-- In index.html footer -->
-      <p class="muted">
-       <a href="/">Home</a> · <a href="/faq.html">FAQ</a> ·
-       <a href="/privacy.html">Privacy Policy</a> ·
-       <a href="/refunds.html">Returns & Refunds</a> ·
-       <a href="/terms.html">Terms of Service</a>
-       <a href="/faq.html">FAQ</a>
-      </p>
-        © <span id="y"></span> ET Naturals. Cosmetic product; not intended to diagnose, treat, cure, or prevent any disease.
-      </div>
+    <div class="footer-inner">
+      <span>© <span id="y"></span> ET Naturals</span>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="refunds.html">Returns & Refunds</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="order.html">Checkout</a>
+      </nav>
     </div>
   </footer>
 

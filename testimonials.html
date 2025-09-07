@@ -131,8 +131,14 @@
       accept-charset="UTF-8"
       novalidate>
   <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
-  <!-- your visible fields: name/loc/rating/text/file -->
+  <!-- make sure these have name= -->
+  <input  id="reviewName"  name="name"  ...>
+  <input  id="reviewLoc"   name="loc"   ...>
+  <select id="reviewRating" name="rating">...</select>
+  <textarea id="reviewText" name="text"></textarea>
+  <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
 </form>
+
 
         <!-- base64 image goes here before submit -->
         <input type="hidden" id="imageDataUrl" name="image_data_url" value="">

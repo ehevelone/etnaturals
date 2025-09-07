@@ -8,6 +8,31 @@
     :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
     * { box-sizing:border-box; }
     body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+
+    /* Shared layout */
+    .container{ max-width:1100px; margin:0 auto; padding:20px; }
+    .logo-img{ display:block; height:60px; width:auto; }
+
+    /* Site header (right-aligned nav) */
+    .site-header{
+      position:sticky; top:0; z-index:1000;
+      background:var(--card);
+      border-bottom:1px solid var(--stroke);
+      backdrop-filter:saturate(120%) blur(6px);
+    }
+    .site-header .container{
+      display:flex; align-items:center; gap:16px;
+    }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+    }
+    .site-header .nav a{
+      color:var(--text); font-weight:600; text-decoration:none;
+    }
+    .site-header .nav a:hover{ text-decoration:underline; }
+
+    /* Page-specific */
     .wrap { max-width:720px; margin:32px auto; padding:20px; }
     a { color:var(--accent); text-decoration:none; }
     header { margin-bottom:12px; }
@@ -20,16 +45,10 @@
     }
     .totals { font-size:15px; color:var(--muted); }
 
-    /* Payment row layout — let PayPal size itself */
-    .paygrid{
-      display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:6px;
-    }
+    /* Payment row */
+    .paygrid{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:6px; }
     #paypal-container{ flex:0 1 320px; min-width:320px; }
-    .payimg{
-      width:200px; max-width:200px; height:auto;
-      border-radius:12px; border:1px solid #2a2d31; box-shadow:0 2px 8px rgba(0,0,0,.25);
-      display:block;
-    }
+    .payimg{ width:200px; max-width:200px; height:auto; border-radius:12px; border:1px solid #2a2d31; box-shadow:0 2px 8px rgba(0,0,0,.25); display:block; }
     .paygrid a:focus-visible img, .paygrid a:hover img { outline:2px solid var(--accent); outline-offset:3px; }
     @media (max-width:520px){ #paypal-container{ min-width:260px; } .payimg{ width:180px; max-width:180px; } }
 
@@ -41,37 +60,16 @@
     }
 
     /* Footer nav */
-.footer-nav{
-  max-width:720px; margin:24px auto 40px; padding:10px 20px;
-  color:var(--muted); text-align:center;
-}
-.footer-nav .links{
-  display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px;
-}
-.footer-nav a{ color:var(--text); opacity:.9; }
-.footer-nav a:hover{ opacity:1; text-decoration:underline; }
-.footer-nav .legal{ font-size:12px; opacity:.75; }
-
+    .footer-nav{ max-width:720px; margin:24px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
+    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
+    .footer-nav .legal{ font-size:12px; opacity:.75; }
   </style>
-  <style>
-  .site-header .container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .site-header .nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-left: auto;         /* pushes nav to the right */
-    justify-content: flex-end; /* keeps it right-aligned on wrap */
-    text-align: right;
-  }
-</style>
-
 </head>
 <body>
-  <div class="wrap">
+
+<!-- FULL-WIDTH STICKY HEADER -->
 <header class="site-header">
   <div class="container">
     <a href="index.html" class="brand">
@@ -91,6 +89,11 @@
     </nav>
   </div>
 </header>
+
+<!-- Keep your existing page content below -->
+<div class="wrap">
+  <!-- ... the rest of your order page ... -->
+
 
 
     <div class="card">

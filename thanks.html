@@ -4,9 +4,16 @@
   <meta charset="utf-8" />
   <title>Thank You — ET Naturals</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- One unified style block -->
   <style>
     :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+
+    /* Page base */
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    a { color:var(--accent); text-decoration:none; }
+
+    /* Layout + components you already use */
     .wrap{max-width:720px;margin:12vh auto 0;padding:24px}
     .card{background:var(--card);border-radius:14px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
     h1{margin:0 0 8px}
@@ -19,46 +26,74 @@
     .btn{appearance:none;border:1px solid var(--stroke);background:#0f1012;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
     .emailbox{display:flex;gap:8px;flex-wrap:wrap}
     input[type="email"]{background:#0f1012;border:1px solid var(--stroke);color:var(--text);padding:10px 12px;border-radius:10px;min-width:240px}
-    a{color:var(--accent);text-decoration:none}
     .note{font-size:12px;color:#9aa3ae;margin-top:8px}
     .sent{font-size:12px;color:#9bd18f;margin-top:8px;display:none}
+
+    /* Shared header (right-aligned nav, sticky) */
+    .container { max-width:1100px; margin:0 auto; padding:20px; }
+    .logo-img { display:block; height:60px; width:auto; }
+
+    .site-header{
+      position:sticky; top:0; z-index:1000;
+      background:var(--card); border-bottom:1px solid var(--stroke);
+      backdrop-filter:saturate(120%) blur(6px);
+    }
+    .site-header .container{ display:flex; align-items:center; gap:16px; }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+    }
+    .site-header .nav a{ color:var(--text); font-weight:600; }
+    .site-header .nav a:hover{ text-decoration:underline; }
   </style>
-<style>
-  .site-header .container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .site-header .nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-left: auto;         /* pushes nav to the right */
-    justify-content: flex-end; /* keeps it right-aligned on wrap */
-    text-align: right;
-  }
-</style>
 </head>
+
 <body>
-<header class="site-header">
-  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
-    <div class="brand">
-      <a href="index.html" class="logo">
-        <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
-             onerror="this.onerror=null;this.src='images/logo.png'">
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img
+          src="images/et-naturals-logo.png"
+          alt="ET Naturals Logo"
+          class="logo-img"
+          onerror="this.onerror=null;this.src='images/logo.png'">
       </a>
+      <nav class="nav">
+        <a href="index.html#shop">Order</a>
+        <a href="about.html">Our Story</a>
+        <a href="index.html#ingredients">Ingredients</a>
+        <a href="faq.html">FAQ</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="order.html">Checkout</a>
+      </nav>
     </div>
-    <nav class="nav">
-      <a href="index.html#shop">Order</a>
-      <a href="about.html">Our Story</a>
-      <a href="index.html#ingredients">Ingredients</a>
-      <a href="faq.html">FAQ</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="about.html">About</a> •
-      <a href="order.html">Checkout</a>
-    </nav>
-  </div>
-</header>
+  </header>
+
+  <!-- Thank-you content (keep or replace as needed) -->
+  <main class="wrap">
+    <section class="card">
+      <h1>Thank you for your order!</h1>
+      <p>We’ve emailed your receipt. Your items will ship soon.</p>
+
+      <div class="row" style="margin-top:18px">
+        <div class="summary">
+          <div class="line"><span>Order</span><span>#ETN-12345</span></div>
+          <div class="line"><span>Delivery</span><span>3–5 business days</span></div>
+          <div class="line total"><span>Total Paid</span><span>$—</span></div>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="index.html#shop">Continue Shopping</a>
+          <a class="btn" href="faq.html">See FAQ</a>
+        </div>
+
+        <p class="note">Questions? <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
 <body>
   <div class="wrap">
     <div class="card">

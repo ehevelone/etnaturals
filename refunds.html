@@ -4,10 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Returns & Refunds — ET Naturals</title>
+
+  <!-- One unified style block -->
   <style>
     :root { --ink:#111; --muted:#666; --bg:#fff; --accent:#0f766e; }
-    html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif; }
-    header { border-bottom:1px solid #eee; background:#fafafa; }
+
+    /* Base page */
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--ink);
+      font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif; }
+    a { color: var(--accent); text-decoration: none; }
     .wrap { max-width: 860px; margin:0 auto; padding: clamp(16px, 2.5vw, 28px); }
     h1 { font-size: clamp(28px, 3.6vw, 40px); margin: 8px 0 6px; letter-spacing:-0.02em; }
     h2 { font-size: clamp(20px, 2.4vw, 26px); margin: 26px 0 10px; }
@@ -15,46 +20,68 @@
     ul { margin: 8px 0 12px 22px; }
     .muted { color: var(--muted); }
     .badge { display:inline-block; font-size:12px; background:#eef8f7; color:#0b5e57; border:1px solid #d7efec; padding:2px 8px; border-radius:999px; }
-    a { color: var(--accent); }
-    footer { border-top:1px solid #eee; margin-top: 28px; }
     section { scroll-margin-top: 80px; }
+    footer { border-top:1px solid #eee; margin-top: 28px; }
+
+    /* Shared header */
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .logo-img { display:block; height:60px; width:auto; }
+
+    /* Site header (sticky + right-aligned nav) */
+    .site-header {
+      position: sticky; top: 0; z-index: 1000;
+      background: #fafafa; border-bottom: 1px solid #eee;
+      backdrop-filter: saturate(120%) blur(6px);
+      color: var(--ink);
+    }
+    .site-header .container {
+      display:flex; align-items:center; gap:16px;
+    }
+    .site-header .nav {
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+    }
+    .site-header .nav a { color: inherit; font-weight:600; }
+    .site-header .nav a:hover { text-decoration: underline; }
   </style>
-  <style>
-  .site-header .container {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .site-header .nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-left: auto;         /* pushes nav to the right */
-    justify-content: flex-end; /* keeps it right-aligned on wrap */
-    text-align: right;
-  }
-</style>
 </head>
+
 <body>
-<header class="site-header">
-  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
-    <div class="brand">
-      <a href="index.html" class="logo">
-        <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
-             onerror="this.onerror=null;this.src='images/logo.png'">
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img
+          src="images/et-naturals-logo.png"
+          alt="ET Naturals Logo"
+          class="logo-img"
+          onerror="this.onerror=null;this.src='images/logo.png'">
       </a>
+      <nav class="nav">
+        <a href="index.html#shop">Order</a>
+        <a href="about.html">Our Story</a>
+        <a href="index.html#ingredients">Ingredients</a>
+        <a href="faq.html">FAQ</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="order.html">Checkout</a>
+      </nav>
     </div>
-    <nav class="nav">
-      <a href="index.html#shop">Order</a>
-      <a href="about.html">Our Story</a>
-      <a href="index.html#ingredients">Ingredients</a>
-      <a href="faq.html">FAQ</a>
-      <a href="testimonials.html">Testimonials</a>
-      <a href="about.html">About</a> •
-      <a href="order.html">Checkout</a>
-    </nav>
-  </div>
-</header>
+  </header>
+
+  <!-- Your refunds content starts here -->
+  <main class="wrap">
+    <!-- keep your existing Returns & Refunds sections/content below -->
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p class="muted">© <span id="y"></span> ET Naturals</p>
+    </div>
+  </footer>
+
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+
 
   <main class="wrap">
     <section id="eligibility">

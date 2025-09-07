@@ -26,35 +26,7 @@
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
     .meta { font-size:12px; color:var(--muted); }
-
-    /* Existing rule (still fine) */
     .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
-
-    /* --- Photo placeholder wrapper (ensures a tile even if image fails) --- */
-    .photo-wrap{
-      width:100%;
-      height:220px;
-      border:1px solid var(--stroke);
-      border-radius:12px;
-      overflow:hidden;
-      background:#0f1012;
-      margin-bottom:8px;
-    }
-    .photo-wrap .ph{
-      height:100%;
-      display:grid;
-      place-items:center;
-      color:#9aa3ae;
-      font-size:12px;
-    }
-    .photo-wrap img{
-      display:none;             /* we reveal it only when it actually loads */
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      border:0;
-      margin:0;
-    }
 
     /* Modal form */
     .open-form { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:10px 14px; border-radius:10px; cursor:pointer; }
@@ -70,41 +42,25 @@
     .form { padding:14px; display:grid; gap:10px; }
     .form input, .form select, .form textarea {
       width:100%; background:#0f1012; border:1px solid var(--stroke);
-      color:#f6f7f9; border-radius:10px; padding:10px;
+      color:var(--text); border-radius:10px; padding:10px;
     }
     .form button { cursor:pointer; }
 
     /* Footer nav */
     .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
     .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
-    .footer-nav a{ color:#f6f7f9; opacity:.9; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
     .footer-nav a:hover{ opacity:1; text-decoration:underline; }
     .footer-nav .legal{ font-size:12px; opacity:.75; }
 
     /* Star rating input (bigger + left aligned) */
-    .rating-stars {
-      display:inline-flex;
-      flex-direction:row-reverse;
-      gap:8px;
-      align-items:center;
-      justify-content:flex-start;
-    }
+    .rating-stars { display:inline-flex; flex-direction:row-reverse; gap:8px; align-items:center; justify-content:flex-start; }
     .rating-stars input { position:absolute; left:-9999px; }
-    .rating-stars label {
-      font-size:32px;
-      line-height:1;
-      cursor:pointer;
-      color:#6b7280;
-      user-select:none;
-      padding:2px;
-    }
+    .rating-stars label { font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px; }
     .rating-stars label:hover,
     .rating-stars label:hover ~ label,
     .rating-stars input:checked ~ label { color:#FFD140; }
-    .rating-stars input:focus + label {
-      outline:2px solid var(--accent);
-      outline-offset:2px; border-radius:4px;
-    }
+    .rating-stars input:focus + label { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
   </style>
 </head>
 <body>
@@ -118,13 +74,12 @@
   </header>
 
   <main class="wrap">
-    <!-- Intro -->
     <section class="card">
       <h1>Customer Testimonials</h1>
       <p class="muted">Real experiences from our community. New submissions appear after approval below.</p>
     </section>
 
-    <!-- Approved (curated + live from sheet) -->
+    <!-- Approved (live from Apps Script) -->
     <section class="grid cols-2" id="approved"></section>
 
     <!-- Submit a testimonial (opens modal) -->
@@ -272,30 +227,16 @@
     // /uc?...&id=<id>
     m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
     if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    // folder links are not embeddable
+    // folder links can't be embedded
     if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
     return u; // allow direct/cdn links
   }
 
-  // Always render a placeholder; reveal the <img> only on successful load
-  function photoHTML(url){
-    const u = normalizeImgUrl(url || '');
-    return `
-      <div class="photo-wrap">
-        <div class="ph">No photo</div>
-        ${u ? `
-          <img class="review-photo" src="${escapeHTML(u)}" alt="Customer photo" loading="lazy"
-               onload="this.previousElementSibling.style.display='none'; this.style.display='block';"
-               onerror="this.remove();">
-        ` : ``}
-      </div>
-    `;
-  }
-
-  /* ---------- Render Approved items ---------- */
+  /* ---------- Render Approved items (no placeholder) ---------- */
   function itemCardHTML(t){
     const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-    const photo = photoHTML(t.img || '');
+    const u = normalizeImgUrl(t.img || '');
+    const photo = u ? `<img class="review-photo" src="${escapeHTML(u)}" alt="Customer photo" loading="lazy" onerror="this.remove()">` : '';
     return `
       <article class="card t">
         ${photo}
@@ -331,31 +272,27 @@
     s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
     document.head.appendChild(s);
   }
-  // Initial load
   fetchApprovedJSONP();
 
-  /* ---------- Preview + after-submit tidy via hidden iframe ---------- */
+  /* ---------- Preview + after-submit tidy ---------- */
   (function(){
     const fileInput = document.getElementById('reviewPhoto');
     const prev      = document.getElementById('photoPreview');
     const sink      = document.getElementById('submitSink');
     const modal     = document.getElementById('formModal');
 
-    // Live preview
     fileInput?.addEventListener('change', () => {
       const f = fileInput.files?.[0];
       if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
       else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
     });
 
-    // After Apps Script responds
     sink?.addEventListener('load', () => {
       alert('Thanks! Your review was submitted.');
       const form = document.getElementById('reviewForm');
       form?.reset();
       if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
       if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-      // Refresh Approved from private feed
       setTimeout(() => {
         const mount = document.getElementById('approved');
         if (mount) mount.innerHTML = '';
@@ -364,7 +301,7 @@
     });
   })();
 
-  // Fill client IP (optional)
+  // Optional: client IP
   (function fillClientIp(){
     const f = document.getElementById('clientIp');
     if (!f) return;

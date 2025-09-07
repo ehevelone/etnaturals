@@ -72,9 +72,23 @@
   height:60px;
   width:auto;
 }
-
-
   </style>
+  <style>
+  .site-header .container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .site-header .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-left: auto;         /* pushes nav to the right */
+    justify-content: flex-end; /* keeps it right-aligned on wrap */
+    text-align: right;
+  }
+</style>
+
 </head>
 
 <body>
@@ -85,8 +99,7 @@
         src="images/et-naturals-logo.png"
         alt="ET Naturals Logo"
         class="logo-img"
-        onerror="this.onerror=null;this.src='images/logo.png'">
-    </a>
+        onerror="this.onerror=null;this.src='images/logo.png'"></a>
     <nav class="nav">
       <a href="index.html#shop">Order</a>
       <a href="about.html">Our Story</a>

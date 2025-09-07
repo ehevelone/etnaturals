@@ -19,16 +19,42 @@
     footer { border-top:1px solid #eee; margin-top: 28px; }
     section { scroll-margin-top: 80px; }
   </style>
+  <style>
+  .site-header .container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .site-header .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-left: auto;         /* pushes nav to the right */
+    justify-content: flex-end; /* keeps it right-aligned on wrap */
+    text-align: right;
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <h1>Returns & Refunds</h1>
-      <p class="muted">Last updated: <strong>September 3, 2025</strong></p>
-      <p class="badge">Plain-English: We’ll make it right if your order arrives damaged, leaking, or with a broken/tampered container.</p>
-      <p>We stand behind every bottle we ship. Because our products are personal-care items, <strong>all sales are final</strong> except when an item arrives <strong>damaged on delivery</strong> (e.g., broken glass, leaking contents, or a compromised/tamper-evident seal). In those cases, we’ll quickly replace the item or issue a refund—your choice—once we verify the issue.</p>
+<header class="site-header">
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+    <div class="brand">
+      <a href="index.html" class="logo">
+        <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
+             onerror="this.onerror=null;this.src='images/logo.png'">
+      </a>
     </div>
-  </header>
+    <nav class="nav">
+      <a href="index.html#shop">Order</a>
+      <a href="about.html">Our Story</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="faq.html">FAQ</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="about.html">About</a> •
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
 
   <main class="wrap">
     <section id="eligibility">

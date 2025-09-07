@@ -19,6 +19,21 @@
     .badge { display:inline-block; font-size:12px; background:#eef8f7; color:#0b5e57; border:1px solid #d7efec; padding:2px 8px; border-radius: 999px; }
     footer { border-top:1px solid #eee; margin-top: 28px; }
   </style>
+  <style>
+  .site-header .container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .site-header .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-left: auto;         /* pushes nav to the right */
+    justify-content: flex-end; /* keeps it right-aligned on wrap */
+    text-align: right;
+  }
+</style>
 </head>
 <body>
 <header class="site-header">

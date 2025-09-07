@@ -73,7 +73,6 @@
 
     <!-- Approved (curated + live from sheet) -->
     <section class="grid cols-2" id="approved">
-      <!-- Example seed cards (keep or remove) -->
       <article class="card t">
         <div class="who">
           <div class="avatar">M</div>
@@ -112,65 +111,80 @@
     </section>
   </main>
 
-<!-- Modal -->
-<div class="modal" id="formModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
-  <div class="modal-dialog">
-    <div class="modal-head">
-      <h3 id="formModalTitle">Share your experience</h3>
-      <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
-    </div>
-    <div class="modal-body">
-      <!-- Hidden iframe to keep page in place -->
-      <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
+  <!-- Modal -->
+  <div class="modal" id="formModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <h3 id="formModalTitle">Share your experience</h3>
+        <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
+      </div>
+      <div class="modal-body">
 
-      <!-- Inline form: posts directly to Apps Script (no CORS) -->
-<form id="reviewForm" class="form"
-      action="https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec"
-      method="POST"
-      target="submitSink"
-      accept-charset="UTF-8"
-      novalidate>
-  <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
-  <!-- your visible fields: name/loc/rating/text/file -->
-</form>
+        <!-- Hidden iframe keep page in place -->
+        <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
 
-        <!-- base64 image goes here before submit -->
-        <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+        <!-- SINGLE form (posts straight to Apps Script) -->
+        <form id="reviewForm" class="form"
+              action="https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec"
+              method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
 
-        <div class="row" style="gap:10px">
-          <div style="flex:1;min-width:200px">
-            <label for="reviewName">Name</label>
-            <input id="reviewName" name="name" type="text" placeholder="Your name" required>
+          <!-- hidden base64 image (we fill this before submit) -->
+          <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+
+          <div class="row" style="gap:10px">
+            <div style="flex:1;min-width:200px">
+              <label for="reviewName">Name</label>
+              <input id="reviewName" name="name" type="text" placeholder="Your name" required>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <label for="reviewLoc">City, State (optional)</label>
+              <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
+            </div>
           </div>
-          <div style="flex:1;min-width:200px">
-            <label for="reviewLoc">City, State (optional)</label>
-            <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
+
+          <label for="reviewRating">Rating</label>
+          <select id="reviewRating" name="rating" required>
+            <option value="" selected disabled>Select…</option>
+            <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
+          </select>
+
+          <label for="reviewText">Your experience</label>
+          <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
+
+          <label for="reviewPhoto">Photo (optional)</label>
+          <!-- no name=; we send base64 via hidden field -->
+          <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+          <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
+
+          <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
+
+            <!-- FORCE NATIVE SUBMIT (bypasses any JS that might block) -->
+            <button class="open-form" type="submit" id="submitBtn"
+              onclick="return (function(btn){
+                var f = btn.form;
+                var file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
+                var hidden = document.getElementById('imageDataUrl');
+
+                function forceSubmit(){ HTMLFormElement.prototype.submit.call(f); }
+
+                if (!file){ hidden.value=''; forceSubmit(); return false; }
+
+                var ok = ['image/jpeg','image/png','image/webp'];
+                if (ok.indexOf(file.type) === -1){ alert('Use JPG, PNG, or WEBP.'); return false; }
+                if (file.size > 2*1024*1024){ alert('Image must be 2 MB or less.'); return false; }
+
+                var r = new FileReader();
+                r.onload  = function(){ hidden.value = r.result; forceSubmit(); };
+                r.onerror = function(){ alert('Could not read image.'); };
+                r.readAsDataURL(file);
+                return false; // prevent normal submit; we call native submit above
+              })(this);">Submit</button>
           </div>
-        </div>
-
-        <label for="reviewRating">Rating</label>
-        <select id="reviewRating" name="rating" required>
-          <option value="" selected disabled>Select…</option>
-          <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
-        </select>
-
-        <label for="reviewText">Your experience</label>
-        <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
-
-        <label for="reviewPhoto">Photo (optional)</label>
-        <!-- no name= on purpose; we send base64 via hidden field -->
-        <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
-        <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
-
-        <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
-          <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
-          <button class="open-form" type="submit" id="submitBtn">Submit</button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- Footer nav -->
   <nav class="footer-nav">
@@ -193,20 +207,6 @@
   const MAX_IMAGE_MB = 2;
   const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
-  // Convert file to data URL for server
-  function fileToDataURL(file) {
-    return new Promise((resolve, reject) => {
-      if (!file) return resolve('');
-      if (!ALLOWED_TYPES.includes(file.type)) return reject(new Error("Please upload JPG, PNG, or WEBP (no HEIC)."));
-      const sizeMb = file.size / (1024 * 1024);
-      if (sizeMb > MAX_IMAGE_MB) return reject(new Error(`Image must be ≤ ${MAX_IMAGE_MB} MB.`));
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = () => reject(new Error("Could not read image file."));
-      r.readAsDataURL(file);
-    });
-  }
-
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // Modal open/close
@@ -214,15 +214,17 @@
     const modal = document.getElementById('formModal');
     const openBtn = document.getElementById('openFormBtn');
     const closeBtn = document.getElementById('closeFormBtn');
+    const close2 = document.getElementById('closeFormBtn2');
     function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
     function close(){ modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
     openBtn.addEventListener('click', open);
     closeBtn.addEventListener('click', close);
+    close2.addEventListener('click', close);
     modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
   })();
 
-  // Load approved (public)
+  // Approved list
   loadCSV(CSV_URL_APPROVED, mountApproved);
 
   // --- CSV helpers (with cache-buster) ---
@@ -258,7 +260,6 @@
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
 
-  // tolerate header variations
   function findCol(head, candidates){
     const norm = s => s.toLowerCase().replace(/\s+/g,' ').trim();
     const H = head.map(norm);
@@ -272,7 +273,6 @@
     return -1;
   }
 
-  // cache-buster
   function withCacheBuster(url){
     const sep = url.includes('?') ? '&' : '?';
     return `${url}${sep}_cb=${Date.now()}`;
@@ -333,124 +333,33 @@
     );
   }
 
-  // === Submit handler (iframe POST, no CORS) ===
-  document.addEventListener('DOMContentLoaded', () => {
-    const form  = document.getElementById('reviewForm');
-    const modal = document.getElementById('formModal');
-    const imgHidden = document.getElementById('imageDataUrl');
-    const submitBtn = document.getElementById('submitBtn');
+  // Preview + after-submit tidy via hidden iframe
+  (function(){
+    const fileInput = document.getElementById('reviewPhoto');
+    const prev      = document.getElementById('photoPreview');
+    const sink      = document.getElementById('submitSink');
+    const modal     = document.getElementById('formModal');
 
-    if (!form) return;
-
-    const photoInput = document.getElementById('reviewPhoto');
-    const prev = document.getElementById('photoPreview');
-    if (photoInput && prev) {
-      photoInput.addEventListener('change', () => {
-        const f = photoInput.files?.[0];
-        if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
-        else { prev.removeAttribute('src'); prev.style.display = 'none'; }
-      });
-      prev.onerror = () => {
-        prev.removeAttribute('src'); prev.style.display = 'none';
-        alert('Preview failed. Please upload a JPG, PNG, or WEBP (no HEIC).');
-      };
-    }
-
-    // Close 2nd button
-    const close2 = document.getElementById('closeFormBtn2');
-    if (close2) close2.addEventListener('click', () => {
-      modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+    fileInput?.addEventListener('change', () => {
+      const f = fileInput.files?.[0];
+      if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+      else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
     });
 
-    // When iframe finishes (server responded), show success + refresh list
-    const sink = document.getElementById('submitSink');
-    sink.addEventListener('load', () => {
-      alert("Thanks! Your review was submitted.");
-      form.reset();
+    sink?.addEventListener('load', () => {
+      alert('Thanks! Your review was submitted.');
+      const form = document.getElementById('reviewForm');
+      form?.reset();
       if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
-      modal.setAttribute('aria-hidden','true'); document.body.style.overflow='';
+      if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+      // (Optional) refresh Approved display after a short delay
       setTimeout(() => {
         const mount = document.getElementById('approved');
         if (mount) mount.innerHTML = '';
         loadCSV(CSV_URL_APPROVED, mountApproved);
-      }, 1200);
-      submitBtn.disabled = false;
+      }, 1000);
     });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (submitBtn.disabled) return;
-      submitBtn.disabled = true;
-
-      try {
-        const file = photoInput?.files?.[0] || null;
-        imgHidden.value = file ? await fileToDataURL(file) : '';
-        // submit the form to the hidden iframe
-        form.submit();
-      } catch (err) {
-        alert(err.message || "Something went wrong.");
-        submitBtn.disabled = false;
-      }
-    });
-  });
+  })();
   </script>
-<script>
-// ---- ET Naturals: bind review form (no extra DOMContentLoaded) ----
-(function bindReviewFormOnce(){
-  const form = document.getElementById('reviewForm');
-  if (!form || form.dataset.bound === '1') return;   // guard
-  form.dataset.bound = '1';
-
-  const fileInput = document.getElementById('reviewPhoto');
-  const imgHidden = document.getElementById('imageDataUrl');
-  const prev      = document.getElementById('photoPreview');
-  const sink      = document.getElementById('submitSink');
-  const modal     = document.getElementById('formModal');
-
-  // helper: file -> base64 (JPG/PNG/WEBP ≤ 2 MB)
-  async function fileToDataURL(file) {
-    if (!file) return '';
-    const ok = ['image/jpeg','image/png','image/webp'];
-    if (!ok.includes(file.type)) throw new Error('Use JPG, PNG, or WEBP.');
-    if (file.size > 2 * 1024 * 1024) throw new Error('Image must be 2 MB or less.');
-    const r = new FileReader();
-    return await new Promise((resolve, reject) => {
-      r.onload = () => resolve(r.result);
-      r.onerror = () => reject(new Error('Could not read image.'));
-      r.readAsDataURL(file);
-    });
-  }
-
-  // live preview
-  fileInput?.addEventListener('change', () => {
-    const f = fileInput.files?.[0];
-    if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
-    else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
-  });
-
-  // submit via hidden iframe (no CORS)
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const f = fileInput?.files?.[0] || null;
-    try {
-      imgHidden.value = f ? await fileToDataURL(f) : '';
-    } catch (err) {
-      alert(err.message || 'Image error'); 
-      return;
-    }
-    form.submit(); // posts directly to your Apps Script /exec
-  }, { once:false });
-
-  // after iframe loads, clear + close modal
-  sink?.addEventListener('load', () => {
-    alert('Thanks! Your review was submitted.');
-    form.reset();
-    prev.removeAttribute('src'); prev.style.display = 'none';
-    if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-  });
-})();
-</script>
-
-
 </body>
 </html>

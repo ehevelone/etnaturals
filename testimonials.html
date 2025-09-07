@@ -274,15 +274,15 @@ function normalizeImgUrl(u){
 /* ---------- Render Approved items coming from Apps Script ---------- */
 function itemCardHTML(t){
   const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-  const imgUrl  = normalizeImgUrl(t.img);
-
-  // Show image when present; log & remove if it fails
+  const imgUrl  = String(t.img || '').trim(); // use as-is (your Apps Script already writes uc?export=view&id=...)
+  
+  // Keep the <img>; if it fails, just hide it (so you still see a placeholder first)
   const photo = imgUrl
     ? `<img class="review-photo"
             src="${escapeHTML(imgUrl)}"
             alt="Customer photo"
-            loading="lazy" decoding="async" referrerpolicy="no-referrer"
-            onerror="this.onerror=null; console.warn('Image failed:', this.src); this.remove();">`
+            loading="lazy" decoding="async"
+            onerror="console.warn('Image failed:', this.src); this.style.display='none';">`
     : '';
 
   return `
@@ -300,6 +300,7 @@ function itemCardHTML(t){
     </article>
   `;
 }
+
 
 
   // JSONP callback (must be global)

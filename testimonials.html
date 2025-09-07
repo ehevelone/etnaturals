@@ -127,6 +127,8 @@
         <form id="reviewForm" class="form"
               action="https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec"
               method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
+              <input type="hidden" id="clientIp" name="ip" value="">
+
 
           <!-- hidden base64 image (we fill this before submit) -->
           <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
@@ -361,5 +363,16 @@
     });
   })();
   </script>
+  <script>
+(function fillClientIp(){
+  const f = document.getElementById('clientIp');
+  if (!f) return;
+  fetch('https://api.ipify.org?format=json')
+    .then(r => r.json())
+    .then(d => { f.value = d.ip || ''; })
+    .catch(() => { /* ignore if blocked */ });
+})();
+</script>
+
 </body>
 </html>

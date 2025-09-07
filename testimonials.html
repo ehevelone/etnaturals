@@ -26,7 +26,15 @@
     .stars .on { color:#FFD140; }
     .quote { color:#dfe3e7; }
     .meta { font-size:12px; color:var(--muted); }
-    .t img.review-photo { width:100%; max-height:220px; object-fit:cover; border-radius:12px; border:1px solid var(--stroke); margin-bottom:8px; }
+    .t img.review-photo {
+      display:block;
+      width:100%;
+      max-height:220px;
+      object-fit:cover;
+      border-radius:12px;
+      border:1px solid var(--stroke);
+      margin-bottom:8px;
+    }
 
     /* Modal form */
     .open-form { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:10px 14px; border-radius:10px; cursor:pointer; }
@@ -86,7 +94,6 @@
     <section class="card" id="submit">
       <h2 style="margin:0 0 6px">Share your experience</h2>
       <p class="muted">Your words help others.</p>
-
       <button class="open-form" id="openFormBtn" type="button">Add your testimonial</button>
       <p class="hint" style="margin-top:8px">Prefer email? Write us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
     </section>
@@ -218,36 +225,47 @@
   function normalizeImgUrl(u){
     if (!u) return '';
     u = String(u).trim();
-    // /file/d/<id>/view...
+
+    // Common Google Drive formats -> direct view URL
     let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
     if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    // /open?id=<id>
+
     m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
     if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    // /uc?...&id=<id>
+
     m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
     if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    // folder links can't be embedded
+
+    // Folder links can't be embedded
     if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
-    return u; // allow direct/cdn links
+    return u;
   }
 
   /* ---------- Render Approved items (no placeholder) ---------- */
   function itemCardHTML(t){
     const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-    const u = normalizeImgUrl(t.img || '');
-    const photo = u ? `<img class="review-photo" src="${escapeHTML(u)}" alt="Customer photo" loading="lazy" onerror="this.remove()">` : '';
+
+    // Accept multiple possible keys defensively
+    const raw = t.img || t.image_url || t.image || t.photo || '';
+    const u   = normalizeImgUrl(raw);
+
+    // Only render <img> when we have a usable URL
+    const photo = u
+      ? `<img class="review-photo" referrerpolicy="no-referrer" decoding="async" loading="lazy"
+               src="${escapeHTML(u)}" alt="Customer photo" onerror="this.remove()">`
+      : '';
+
     return `
       <article class="card t">
         ${photo}
         <div class="who">
           <div class="avatar">${escapeHTML(initial)}</div>
           <div>
-            <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+            <div><b>${escapeHTML(t.name || '')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
             <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
           </div>
         </div>
-        <p class="quote">“${escapeHTML(t.msg)}”</p>
+        <p class="quote">“${escapeHTML(t.msg || '')}”</p>
         <div class="meta">Used: Root Renewal</div>
       </article>
     `;

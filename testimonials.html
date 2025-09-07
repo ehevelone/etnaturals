@@ -54,22 +54,25 @@
     .footer-nav .legal{ font-size:12px; opacity:.75; }
 
     /* Star rating input */
+/* Star rating input (bigger + left aligned) */
 .rating-stars {
-  display:inline-flex;
-  flex-direction:row-reverse; /* fill leftward */
-  gap:6px;
+  display:inline-flex;          /* hug content so it sits left */
+  flex-direction:row-reverse;   /* keeps simple hover/checked logic */
+  gap:8px;
   align-items:center;
+  justify-content:flex-start;   /* explicit left */
 }
 .rating-stars input {
-  position:absolute; /* accessible but off-screen */
+  position:absolute;
   left:-9999px;
 }
 .rating-stars label {
-  font-size:22px;
+  font-size:32px;               /* ⬅️ bigger stars */
   line-height:1;
   cursor:pointer;
   color:#6b7280;
   user-select:none;
+  padding:2px;                  /* nicer tap target */
 }
 .rating-stars label:hover,
 .rating-stars label:hover ~ label,
@@ -81,6 +84,7 @@
   outline-offset:2px;
   border-radius:4px;
 }
+
 
   </style>
 </head>

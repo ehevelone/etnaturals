@@ -55,24 +55,25 @@
 
     /* Star rating input */
 /* Star rating input (bigger + left aligned) */
+/* Star rating input (bigger + left aligned) */
 .rating-stars {
-  display:inline-flex;          /* hug content so it sits left */
+  display:inline-flex;
   flex-direction:row-reverse;   /* keeps simple hover/checked logic */
   gap:8px;
   align-items:center;
-  justify-content:flex-start;   /* explicit left */
+  justify-content:flex-start;   /* align stars within their own flex box */
 }
 .rating-stars input {
   position:absolute;
   left:-9999px;
 }
 .rating-stars label {
-  font-size:32px;               /* ⬅️ bigger stars */
+  font-size:32px;               /* bigger stars */
   line-height:1;
   cursor:pointer;
   color:#6b7280;
   user-select:none;
-  padding:2px;                  /* nicer tap target */
+  padding:2px;
 }
 .rating-stars label:hover,
 .rating-stars label:hover ~ label,
@@ -84,6 +85,7 @@
   outline-offset:2px;
   border-radius:4px;
 }
+
 
 
   </style>

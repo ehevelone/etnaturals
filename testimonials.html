@@ -52,6 +52,36 @@
     .footer-nav a{ color:var(--text); opacity:.9; }
     .footer-nav a:hover{ opacity:1; text-decoration:underline; }
     .footer-nav .legal{ font-size:12px; opacity:.75; }
+
+    /* Star rating input */
+.rating-stars {
+  display:inline-flex;
+  flex-direction:row-reverse; /* fill leftward */
+  gap:6px;
+  align-items:center;
+}
+.rating-stars input {
+  position:absolute; /* accessible but off-screen */
+  left:-9999px;
+}
+.rating-stars label {
+  font-size:22px;
+  line-height:1;
+  cursor:pointer;
+  color:#6b7280;
+  user-select:none;
+}
+.rating-stars label:hover,
+.rating-stars label:hover ~ label,
+.rating-stars input:checked ~ label {
+  color:#FFD140;
+}
+.rating-stars input:focus + label {
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+  border-radius:4px;
+}
+
   </style>
 </head>
 <body>
@@ -144,11 +174,24 @@
             </div>
           </div>
 
-          <label for="reviewRating">Rating</label>
-          <select id="reviewRating" name="rating" required>
-            <option value="" selected disabled>Select…</option>
-            <option>5</option><option>4</option><option>3</option><option>2</option><option>1</option>
-          </select>
+     <label>Rating</label>
+     <div class="rating-stars" aria-label="Rating from 1 to 5 stars">
+       <input type="radio" id="star5" name="rating" value="5" required>
+       <label for="star5" title="5 stars">★</label>
+
+       <input type="radio" id="star4" name="rating" value="4">
+       <label for="star4" title="4 stars">★</label>
+
+       <input type="radio" id="star3" name="rating" value="3">
+       <label for="star3" title="3 stars">★</label>
+
+       <input type="radio" id="star2" name="rating" value="2">
+       <label for="star2" title="2 stars">★</label>
+
+       <input type="radio" id="star1" name="rating" value="1">
+       <label for="star1" title="1 star">★</label>
+     </div>
+
 
           <label for="reviewText">Your experience</label>
           <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
@@ -201,168 +244,115 @@
     <div class="legal">© <span id="year"></span> ET Naturals</div>
   </nav>
 
-  <script>
-  // ====== CONFIGURE THIS ======
-const CSV_URL_APPROVED = 'https://docs.google.com/spreadsheets/d/1tWfsvfsOVZ-qmFE8YxXY6rHzfY_ToakEJbP2HUpawNc/export?format=csv&gid=1688658905';
-// ============================
+<script>
+// ====== CONFIG: load Approved via your Apps Script (private) ======
+const JSONP_URL_APPROVED =
+  'https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
+// ================================================================
 
-  const MAX_IMAGE_MB = 2;
-  const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
+const MAX_IMAGE_MB = 2;
+const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+// Year
+document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Modal open/close
-  (function(){
-    const modal = document.getElementById('formModal');
-    const openBtn = document.getElementById('openFormBtn');
-    const closeBtn = document.getElementById('closeFormBtn');
-    const close2 = document.getElementById('closeFormBtn2');
-    function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
-    function close(){ modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-    openBtn.addEventListener('click', open);
-    closeBtn.addEventListener('click', close);
-    close2.addEventListener('click', close);
-    modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-  })();
+// Modal open/close
+(function(){
+  const modal   = document.getElementById('formModal');
+  const openBtn = document.getElementById('openFormBtn');
+  const closeBtn= document.getElementById('closeFormBtn');
+  const close2  = document.getElementById('closeFormBtn2');
+  function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function close(){ modal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
+  openBtn.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  if (close2) close2.addEventListener('click', close);
+  modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+})();
 
-  // Approved list
-  loadCSV(CSV_URL_APPROVED, mountApproved);
+/* ---------- Helpers used by the renderer ---------- */
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, m => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+  ));
+}
+function starHTML(n){
+  n = Number(n)||0; n = Math.max(1, Math.min(5, n));
+  return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
+}
 
-  // --- CSV helpers (with cache-buster) ---
-  function parseCSV(text){
-    const rows = [];
-    let row = [], cell = '', inQuotes = false;
-    for (let i = 0; i < text.length; i++){
-      const ch = text[i], next = text[i+1];
-      if (inQuotes){
-        if (ch === '"' && next === '"'){ cell += '"'; i++; }
-        else if (ch === '"'){ inQuotes = false; }
-        else { cell += ch; }
-      } else {
-        if (ch === '"'){ inQuotes = true; }
-        else if (ch === ','){ row.push(cell); cell=''; }
-        else if (ch === '\n'){ row.push(cell); rows.push(row); row=[]; cell=''; }
-        else if (ch === '\r'){ /* skip */ }
-        else { cell += ch; }
-      }
-    }
-    if (cell.length || row.length) { row.push(cell); rows.push(row); }
-    return rows;
-  }
-
-  function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g, m => (
-      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
-    ));
-  }
-
-  function starHTML(n){
-    n = Number(n)||0; n = Math.max(1, Math.min(5, n));
-    return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
-  }
-
-  function findCol(head, candidates){
-    const norm = s => s.toLowerCase().replace(/\s+/g,' ').trim();
-    const H = head.map(norm);
-    for (const cand of candidates){
-      const i = H.indexOf(norm(cand));
-      if (i !== -1) return i;
-    }
-    for (let i=0;i<H.length;i++){
-      if (candidates.some(c => H[i].includes(norm(c)))) return i;
-    }
-    return -1;
-  }
-
-  function withCacheBuster(url){
-    const sep = url.includes('?') ? '&' : '?';
-    return `${url}${sep}_cb=${Date.now()}`;
-  }
-
-  function loadCSV(url, cb){
-    if(!url) return;
-    fetch(withCacheBuster(url), { cache:'no-store' })
-      .then(r => r.text())
-      .then(t => cb(parseCSV(t)))
-      .catch(() => {/* silent */});
-  }
-
-  function mapRows(rows){
-    if (!rows || !rows.length) return [];
-    const head = rows[0].map(h => h.trim());
-    const idx = {
-      name:   findCol(head, ['Full Name','Name']),
-      loc:    findCol(head, ['City, State','City / State','City','Location']),
-      rating: findCol(head, ['Rating','Stars','Star Rating']),
-      msg:    findCol(head, ['Your Testimonial','Testimonial','Your Experience','Review','Comment','Message','Feedback']),
-      img:    findCol(head, ['Image URL','image_url','Photo','Image'])
-    };
-    return rows.slice(1).map(r => ({
-      name:   (idx.name>=0? r[idx.name] : '').trim(),
-      loc:    (idx.loc >=0? r[idx.loc]  : '').trim(),
-      rating: (idx.rating>=0? r[idx.rating] : '5').trim(),
-      msg:    (idx.msg >=0? r[idx.msg]  : '').trim(),
-      img:    (idx.img >=0? r[idx.img]  : '').trim()
-    })).filter(x => x.name && x.msg);
-  }
-
-  function cardHTML(t){
-    const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-    const photo = t.img ? `<img class="review-photo" src="${escapeHTML(t.img)}" alt="Customer photo" loading="lazy">` : '';
-    return `
-      <article class="card t">
-        ${photo}
-        <div class="who">
-          <div class="avatar">${escapeHTML(initial)}</div>
-          <div>
-            <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
-            <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
-          </div>
+/* ---------- Render Approved items coming from Apps Script ---------- */
+function itemCardHTML(t){
+  const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+  const photo = t.img ? `<img class="review-photo" src="${escapeHTML(t.img)}" alt="Customer photo" loading="lazy">` : '';
+  return `
+    <article class="card t">
+      ${photo}
+      <div class="who">
+        <div class="avatar">${escapeHTML(initial)}</div>
+        <div>
+          <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+          <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
         </div>
-        <p class="quote">“${escapeHTML(t.msg)}”</p>
-        <div class="meta">Used: Root Renewal</div>
-      </article>
-    `;
-  }
+      </div>
+      <p class="quote">“${escapeHTML(t.msg)}”</p>
+      <div class="meta">Used: Root Renewal</div>
+    </article>
+  `;
+}
 
-  function mountApproved(rows){
-    const list = mapRows(rows);
-    const mount = document.getElementById('approved');
-    mount.insertAdjacentHTML('beforeend',
-      list.length ? list.map(cardHTML).join('') :
-      `<div class="muted">No approved testimonials yet.</div>`
-    );
-  }
+// JSONP callback that your Apps Script returns
+function ETN_mountApproved(resp){
+  const mount = document.getElementById('approved');
+  if (!mount) return;
+  const items = (resp && resp.ok && Array.isArray(resp.items)) ? resp.items : [];
+  mount.insertAdjacentHTML('beforeend',
+    items.length ? items.map(itemCardHTML).join('') :
+    `<div class="muted">No approved testimonials yet.</div>`
+  );
+}
 
-  // Preview + after-submit tidy via hidden iframe
-  (function(){
-    const fileInput = document.getElementById('reviewPhoto');
-    const prev      = document.getElementById('photoPreview');
-    const sink      = document.getElementById('submitSink');
-    const modal     = document.getElementById('formModal');
+// Request Approved via JSONP (adds a cache-buster)
+function fetchApprovedJSONP(){
+  const s = document.createElement('script');
+  s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
+  document.head.appendChild(s);
+}
+// Initial load
+fetchApprovedJSONP();
 
-    fileInput?.addEventListener('change', () => {
-      const f = fileInput.files?.[0];
-      if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
-      else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
-    });
+/* ---------- Preview + after-submit tidy via hidden iframe ---------- */
+(function(){
+  const fileInput = document.getElementById('reviewPhoto');
+  const prev      = document.getElementById('photoPreview');
+  const sink      = document.getElementById('submitSink');
+  const modal     = document.getElementById('formModal');
 
-    sink?.addEventListener('load', () => {
-      alert('Thanks! Your review was submitted.');
-      const form = document.getElementById('reviewForm');
-      form?.reset();
-      if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
-      if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-      // (Optional) refresh Approved display after a short delay
-      setTimeout(() => {
-        const mount = document.getElementById('approved');
-        if (mount) mount.innerHTML = '';
-        loadCSV(CSV_URL_APPROVED, mountApproved);
-      }, 1000);
-    });
-  })();
-  </script>
+  // Live preview
+  fileInput?.addEventListener('change', () => {
+    const f = fileInput.files?.[0];
+    if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+    else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
+  });
+
+  // After Apps Script responds
+  sink?.addEventListener('load', () => {
+    alert('Thanks! Your review was submitted.');
+    const form = document.getElementById('reviewForm');
+    form?.reset();
+    if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
+    if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+    // Refresh Approved from private feed
+    setTimeout(() => {
+      const mount = document.getElementById('approved');
+      if (mount) mount.innerHTML = '';
+      fetchApprovedJSONP();
+    }, 1000);
+  });
+})();
+</script>
+
   <script>
 (function fillClientIp(){
   const f = document.getElementById('clientIp');

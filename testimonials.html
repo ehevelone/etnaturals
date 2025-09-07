@@ -286,6 +286,31 @@ function starHTML(n){
   n = Number(n)||0; n = Math.max(1, Math.min(5, n));
   return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
 }
+<script>
+function normalizeImgUrl(u){
+  if (!u) return '';
+  u = String(u).trim();
+
+  // /file/d/<id>/view...
+  let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  // /open?id=<id>
+  m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  // /uc? ... id=<id>  -> force export=view
+  m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
+  if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+
+  // Folder links can’t be embedded
+  if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
+
+  // Already a direct or CDN URL (e.g., lh3.googleusercontent.com) — use as-is
+  return u;
+}
+</script>
+
 
 /* ---------- Render Approved items coming from Apps Script ---------- */
 function itemCardHTML(t){

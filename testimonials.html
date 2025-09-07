@@ -160,10 +160,10 @@
         <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
 
         <!-- SINGLE form (posts straight to Apps Script) -->
-        <form id="reviewForm" class="form"
-              action="https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec"
-              method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
-              <input type="hidden" id="clientIp" name="ip" value="">
+         <form id="reviewForm" class="form"
+            action="https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec"
+            method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
+            <input type="hidden" id="clientIp" name="ip" value="">
 
 
           <!-- hidden base64 image (we fill this before submit) -->
@@ -251,10 +251,9 @@
   </nav>
 
 <script>
-// ====== CONFIG: load Approved via your Apps Script (private) ======
 const JSONP_URL_APPROVED =
-  'https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
-// ================================================================
+  'https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
+
 
 const MAX_IMAGE_MB = 2;
 const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];

@@ -38,26 +38,25 @@
     .modal-close { appearance:none; background:transparent; color:#f6f7f9; border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
     .modal-body { padding:0; }
 
-    /* Form */
+    /* Form fields */
     .form { padding:14px; display:grid; gap:10px; }
-    .form input, .form textarea {
+    .form input, .form select, .form textarea {
       width:100%; background:#0f1012; border:1px solid var(--stroke);
       color:var(--text); border-radius:10px; padding:10px;
     }
     .form button { cursor:pointer; }
 
+    /* Footer nav */
+    .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
+    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
+    .footer-nav .legal{ font-size:12px; opacity:.75; }
+
     /* Star rating input (bigger + left aligned) */
-    .rating-stars {
-      display:inline-flex;
-      flex-direction:row-reverse;
-      gap:8px;
-      align-items:center;
-      justify-content:flex-start;
-    }
+    .rating-stars { display:inline-flex; flex-direction:row-reverse; gap:8px; align-items:center; justify-content:flex-start; }
     .rating-stars input { position:absolute; left:-9999px; }
-    .rating-stars label {
-      font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px;
-    }
+    .rating-stars label { font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px; }
     .rating-stars label:hover,
     .rating-stars label:hover ~ label,
     .rating-stars input:checked ~ label { color:#FFD140; }
@@ -80,9 +79,8 @@
       <p class="muted">Real experiences from our community. New submissions appear after approval below.</p>
     </section>
 
-    <!-- Approved (live from sheet via Apps Script) -->
     <section class="grid cols-2" id="approved">
-      <!-- seed examples (keep/remove) -->
+      <!-- seed examples -->
       <article class="card t">
         <div class="who">
           <div class="avatar">M</div>
@@ -107,7 +105,6 @@
       </article>
     </section>
 
-    <!-- Submit a testimonial (opens modal) -->
     <section class="card" id="submit">
       <h2 style="margin:0 0 6px">Share your experience</h2>
       <p class="muted">Your words help others.</p>
@@ -115,9 +112,7 @@
       <p class="hint" style="margin-top:8px">Prefer email? Write us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
     </section>
 
-    <section class="card">
-      <p class="muted">Cosmetic product. Individual experiences vary; no medical or therapeutic claims are made.</p>
-    </section>
+    <section class="card"><p class="muted">Cosmetic product. Individual experiences vary; no medical or therapeutic claims are made.</p></section>
   </main>
 
   <!-- Modal -->
@@ -129,14 +124,11 @@
       </div>
       <div class="modal-body">
         <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
-
-        <!-- SINGLE form (posts straight to Apps Script) -->
         <form id="reviewForm" class="form"
-              action="https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec"
-              method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
+          action="https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec"
+          method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
           <input type="hidden" id="clientIp" name="ip" value="">
           <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
-
           <div class="row" style="gap:10px">
             <div style="flex:1;min-width:200px">
               <label for="reviewName">Name</label>
@@ -188,7 +180,6 @@
     </div>
   </div>
 
-  <!-- Footer nav -->
   <nav class="footer-nav">
     <div class="links">
       <a href="index.html#shop">Shop</a>
@@ -202,143 +193,142 @@
   </nav>
 
   <script>
-  // ===== Apps Script feed (Approved) =====
-  const JSONP_URL_APPROVED =
-    'https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
+    // --- Config: private Approved feed (JSONP) ---
+    const JSONP_URL_APPROVED =
+      'https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
 
-  const MAX_IMAGE_MB = 2;
-  const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
+    const MAX_IMAGE_MB = 2;
+    const ALLOWED_TYPES = ["image/jpeg","image/png","image/webp"];
 
-  // Year
-  document.getElementById('year').textContent = new Date().getFullYear();
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Modal open/close
-  (function(){
-    const modal   = document.getElementById('formModal');
-    const openBtn = document.getElementById('openFormBtn');
-    const closeBtn= document.getElementById('closeFormBtn');
-    const close2  = document.getElementById('closeFormBtn2');
-    function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
-    function close(){ modal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
-    openBtn.addEventListener('click', open);
-    closeBtn.addEventListener('click', close);
-    if (close2) close2.addEventListener('click', close);
-    modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
-    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-  })();
+    // Modal open/close
+    (function(){
+      const modal   = document.getElementById('formModal');
+      const openBtn = document.getElementById('openFormBtn');
+      const closeBtn= document.getElementById('closeFormBtn');
+      const close2  = document.getElementById('closeFormBtn2');
+      function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+      function close(){ modal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
+      openBtn.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      if (close2) close2.addEventListener('click', close);
+      modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+    })();
 
-  /* ---------- helpers ---------- */
-  function escapeHTML(s){
-    return String(s).replace(/[&<>"']/g, m => (
-      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
-    ));
-  }
-  function starHTML(n){
-    n = Number(n)||0; n = Math.max(1, Math.min(5, n));
-    return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
-  }
-  // Normalize common Google Drive URLs into direct-view links
-  function normalizeImgUrl(u){
-    if (!u) return '';
-    u = String(u).trim();
-    let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-    if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
-    return u;
-  }
+    // Helpers
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, m => (
+        {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+      ));
+    }
+    function starHTML(n){
+      n = Number(n)||0; n = Math.max(1, Math.min(5, n));
+      return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
+    }
+    function normalizeImgUrl(u){
+      if (!u) return '';
+      u = String(u).trim();
+      let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
+      if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+      m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
+      if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+      m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
+      if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+      if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
+      return u;
+    }
 
-  /* ---------- render Approved ---------- */
-  function itemCardHTML(t){
-    const initial = (t.name||'?')[0]?.toUpperCase() || '?';
-    const img = normalizeImgUrl(t.img || '');
-    const photo = img ? `<img class="review-photo" src="${escapeHTML(img)}" alt="Customer photo" loading="lazy" onerror="this.remove()">` : '';
-    return `
-      <article class="card t">
-        ${photo}
-        <div class="who">
-          <div class="avatar">${escapeHTML(initial)}</div>
-          <div>
-            <div><b>${escapeHTML(t.name||'')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
-            <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+    // Render Approved
+    function itemCardHTML(t){
+      const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+      const url = normalizeImgUrl(t.img || '');
+      const photo = url
+        ? `<img class="review-photo" src="${escapeHTML(url)}" alt="Customer photo" loading="lazy" onerror="this.remove()">`
+        : '';
+      return `
+        <article class="card t">
+          ${photo}
+          <div class="who">
+            <div class="avatar">${escapeHTML(initial)}</div>
+            <div>
+              <div><b>${escapeHTML(t.name)}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+              <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+            </div>
           </div>
-        </div>
-        <p class="quote">“${escapeHTML(t.msg||'')}”</p>
-        <div class="meta">Used: Root Renewal</div>
-      </article>
-    `;
-  }
+          <p class="quote">“${escapeHTML(t.msg)}”</p>
+          <div class="meta">Used: Root Renewal</div>
+        </article>
+      `;
+    }
 
-  // JSONP callback (must be global)
-  window.ETN_mountApproved = function(resp){
-    const mount = document.getElementById('approved');
-    if (!mount) return;
-    const items = (resp && resp.ok && Array.isArray(resp.items)) ? resp.items : [];
-    mount.insertAdjacentHTML('beforeend',
-      items.length ? items.map(itemCardHTML).join('') :
-      `<div class="muted">No approved testimonials yet.</div>`
-    );
-  };
-
-  // Fetch Approved via JSONP (with cache-buster)
-  function fetchApprovedJSONP(){
-    const old = document.getElementById('approvedJsonpTag');
-    if (old) old.remove();
-    const s = document.createElement('script');
-    s.id  = 'approvedJsonpTag';
-    s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
-    s.onerror = () => {
-      console.warn('Approved JSONP failed to load.');
+    // Global JSONP callback
+    window.ETN_mountApproved = function(resp){
       const mount = document.getElementById('approved');
-      if (mount && !mount.dataset.failedOnce){
-        mount.dataset.failedOnce = '1';
-        mount.insertAdjacentHTML('beforeend', `<div class="muted">Couldn’t load testimonials. Please refresh.</div>`);
-      }
+      if (!mount) return;
+      const items = (resp && resp.ok && Array.isArray(resp.items)) ? resp.items : [];
+      mount.insertAdjacentHTML('beforeend',
+        items.length ? items.map(itemCardHTML).join('') :
+        `<div class="muted">No approved testimonials yet.</div>`
+      );
     };
-    document.head.appendChild(s);
-  }
-  fetchApprovedJSONP();
 
-  /* ---------- preview + tidy after submit ---------- */
-  (function(){
-    const fileInput = document.getElementById('reviewPhoto');
-    const prev      = document.getElementById('photoPreview');
-    const sink      = document.getElementById('submitSink');
-    const modal     = document.getElementById('formModal');
-
-    fileInput?.addEventListener('change', () => {
-      const f = fileInput.files?.[0];
-      if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
-      else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
-    });
-
-    sink?.addEventListener('load', () => {
-      alert('Thanks! Your review was submitted.');
-      const form = document.getElementById('reviewForm');
-      form?.reset();
-      if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
-      if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
-      setTimeout(() => {
+    // Load Approved via JSONP (with cache-buster)
+    function fetchApprovedJSONP(){
+      const old = document.getElementById('approvedJsonpTag');
+      if (old) old.remove();
+      const s = document.createElement('script');
+      s.id  = 'approvedJsonpTag';
+      s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
+      s.onerror = () => {
+        console.warn('Approved JSONP failed to load.');
         const mount = document.getElementById('approved');
-        if (mount) mount.innerHTML = '';
-        fetchApprovedJSONP();
-      }, 1000);
-    });
-  })();
-  </script>
+        if (mount && !mount.dataset.failedOnce){
+          mount.dataset.failedOnce = '1';
+          mount.insertAdjacentHTML('beforeend', `<div class="muted">Couldn’t load testimonials. Please refresh.</div>`);
+        }
+      };
+      document.head.appendChild(s);
+    }
+    fetchApprovedJSONP();
 
-  <!-- client IP filler (optional rate-limit signal) -->
-  <script>
-    (function fillClientIp(){
+    // Preview + after-submit tidy (hidden iframe)
+    (function(){
+      const fileInput = document.getElementById('reviewPhoto');
+      const prev      = document.getElementById('photoPreview');
+      const sink      = document.getElementById('submitSink');
+      const modal     = document.getElementById('formModal');
+
+      fileInput?.addEventListener('change', () => {
+        const f = fileInput.files?.[0];
+        if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+        else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
+      });
+
+      sink?.addEventListener('load', () => {
+        alert('Thanks! Your review was submitted.');
+        const form = document.getElementById('reviewForm');
+        form?.reset();
+        if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
+        if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+        setTimeout(() => {
+          const mount = document.getElementById('approved');
+          if (mount) mount.innerHTML = '';
+          fetchApprovedJSONP();
+        }, 1000);
+      });
+    })();
+
+    // Capture client IP (optional)
+    (function(){
       const f = document.getElementById('clientIp');
       if (!f) return;
       fetch('https://api.ipify.org?format=json')
         .then(r => r.json())
         .then(d => { f.value = d.ip || ''; })
-        .catch(() => {});
+        .catch(()=>{});
     })();
   </script>
 </body>

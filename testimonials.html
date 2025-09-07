@@ -222,54 +222,61 @@
     n = Number(n)||0; n = Math.max(1, Math.min(5, n));
     return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
   }
-  function normalizeImgUrl(u){
-    if (!u) return '';
-    u = String(u).trim();
+// --- REPLACE normalizeImgUrl with this ---
+function normalizeImgUrl(u){
+  if (!u) return '';
+  u = String(u).trim();
 
-    // Common Google Drive formats -> direct view URL
-    let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
+  // Try to pull a Drive file id out of the common formats
+  let id = null;
+  let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)/i);
+  if (m) id = m[1];
+  if (!id) { m = u.match(/[?&]id=([^&]+)/i); if (m) id = m[1]; }
+  if (!id) { m = u.match(/https?:\/\/drive\.google\.com\/uc\?[^#]*\bid=([^&]+)/i); if (m) id = m[1]; }
 
-    m = u.match(/https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-
-    m = u.match(/https?:\/\/drive\.google\.com\/uc\?(?:[^#]*\bid=([^&]+))/i);
-    if (m) return 'https://drive.google.com/uc?export=view&id=' + m[1];
-
-    // Folder links can't be embedded
-    if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
-    return u;
+  // If we found an id, prefer Drive's thumbnail endpoint (more reliable for <img>)
+  if (id) {
+    return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1200';
   }
 
-  /* ---------- Render Approved items (no placeholder) ---------- */
-  function itemCardHTML(t){
-    const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+  // Folder links can’t be embedded
+  if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
 
-    // Accept multiple possible keys defensively
-    const raw = t.img || t.image_url || t.image || t.photo || '';
-    const u   = normalizeImgUrl(raw);
+  // Otherwise, use the URL as-is
+  return u;
+}
 
-    // Only render <img> when we have a usable URL
-    const photo = u
-      ? `<img class="review-photo" referrerpolicy="no-referrer" decoding="async" loading="lazy"
-               src="${escapeHTML(u)}" alt="Customer photo" onerror="this.remove()">`
-      : '';
+// --- REPLACE itemCardHTML with this ---
+function itemCardHTML(t){
+  const initial = (t.name||'?')[0]?.toUpperCase() || '?';
 
-    return `
-      <article class="card t">
-        ${photo}
-        <div class="who">
-          <div class="avatar">${escapeHTML(initial)}</div>
-          <div>
-            <div><b>${escapeHTML(t.name || '')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
-            <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
-          </div>
+  // accept several key names just in case
+  const raw = t.img || t.image_url || t.image || t.photo || '';
+  const u   = normalizeImgUrl(raw);
+
+  // Only render <img> when we have a usable URL; if it fails, drop it (no placeholder)
+  const photo = u
+    ? `<img class="review-photo" decoding="async" loading="lazy"
+             src="${escapeHTML(u)}"
+             alt="Customer photo"
+             onerror="this.remove()">`
+    : '';
+
+  return `
+    <article class="card t">
+      ${photo}
+      <div class="who">
+        <div class="avatar">${escapeHTML(initial)}</div>
+        <div>
+          <div><b>${escapeHTML(t.name || '')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+          <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
         </div>
-        <p class="quote">“${escapeHTML(t.msg || '')}”</p>
-        <div class="meta">Used: Root Renewal</div>
-      </article>
-    `;
-  }
+      </div>
+      <p class="quote">“${escapeHTML(t.msg || '')}”</p>
+      <div class="meta">Used: Root Renewal</div>
+    </article>
+  `;
+}
 
   // JSONP callback (must be global)
   window.ETN_mountApproved = function(resp){

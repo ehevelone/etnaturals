@@ -124,12 +124,16 @@
       <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
 
       <!-- Inline form: posts directly to Apps Script (no CORS) -->
-      <form id="reviewForm" class="form"
-            action="https://script.google.com/macros/s/AKfycbwGNcxdOPkGdWBfGblTUOOxczaerAPGxnk-sCb46Jks08zou_QIwOPBj1QqcDAcJq-W/exec"
-            method="POST"
-            target="submitSink"
-            accept-charset="UTF-8"
-            novalidate>
+<form id="reviewForm" class="form"
+      action="https://script.google.com/macros/s/AKfycbzbVTbzjEOhkpW2pfHY-PkmkkSh9ph8iw9rMAhAxd-IPMubNhWC_trIXN_McnMrOpL7/exec"
+      method="POST"
+      target="submitSink"
+      accept-charset="UTF-8"
+      novalidate>
+  <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+  <!-- your visible fields: name/loc/rating/text/file -->
+</form>
+
         <!-- base64 image goes here before submit -->
         <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
 
@@ -390,53 +394,63 @@
     });
   });
   </script>
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const form      = document.getElementById('reviewForm');
+<script>
+// ---- ET Naturals: bind review form (no extra DOMContentLoaded) ----
+(function bindReviewFormOnce(){
+  const form = document.getElementById('reviewForm');
+  if (!form || form.dataset.bound === '1') return;   // guard
+  form.dataset.bound = '1';
+
   const fileInput = document.getElementById('reviewPhoto');
   const imgHidden = document.getElementById('imageDataUrl');
   const prev      = document.getElementById('photoPreview');
   const sink      = document.getElementById('submitSink');
+  const modal     = document.getElementById('formModal');
 
-  // Show a small preview when a file is chosen
+  // helper: file -> base64 (JPG/PNG/WEBP ≤ 2 MB)
+  async function fileToDataURL(file) {
+    if (!file) return '';
+    const ok = ['image/jpeg','image/png','image/webp'];
+    if (!ok.includes(file.type)) throw new Error('Use JPG, PNG, or WEBP.');
+    if (file.size > 2 * 1024 * 1024) throw new Error('Image must be 2 MB or less.');
+    const r = new FileReader();
+    return await new Promise((resolve, reject) => {
+      r.onload = () => resolve(r.result);
+      r.onerror = () => reject(new Error('Could not read image.'));
+      r.readAsDataURL(file);
+    });
+  }
+
+  // live preview
   fileInput?.addEventListener('change', () => {
     const f = fileInput.files?.[0];
     if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
     else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
   });
 
-  // On submit: convert photo to text (base64) -> put into the hidden field -> really submit
+  // submit via hidden iframe (no CORS)
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = fileInput.files?.[0] || null;
-    imgHidden.value = f ? await fileToDataURL(f) : '';  // if no photo, send empty
-    form.submit(); // posts to Apps Script via the hidden iframe (no CORS issues)
-  });
+    const f = fileInput?.files?.[0] || null;
+    try {
+      imgHidden.value = f ? await fileToDataURL(f) : '';
+    } catch (err) {
+      alert(err.message || 'Image error'); 
+      return;
+    }
+    form.submit(); // posts directly to your Apps Script /exec
+  }, { once:false });
 
-  // When the hidden iframe finishes, show a message and clear everything
-  sink.addEventListener('load', () => {
+  // after iframe loads, clear + close modal
+  sink?.addEventListener('load', () => {
     alert('Thanks! Your review was submitted.');
     form.reset();
     prev.removeAttribute('src'); prev.style.display = 'none';
-    const modal = document.getElementById('formModal');
-    if (modal) { modal.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; }
+    if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
   });
-
-  // Helper: turn the chosen file into base64 text (small, safe)
-  function fileToDataURL(file) {
-    return new Promise((resolve, reject) => {
-      if (!file) return resolve('');
-      const okTypes = ['image/jpeg','image/png','image/webp'];
-      if (!okTypes.includes(file.type)) return reject(new Error('Use JPG, PNG, or WEBP.'));
-      if (file.size > 2 * 1024 * 1024) return reject(new Error('Image must be 2 MB or less.'));
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = () => reject(new Error('Could not read image.'));
-      r.readAsDataURL(file);
-    });
-  }
-});
+})();
 </script>
+
 
 </body>
 </html>

@@ -309,7 +309,8 @@ function itemCardHTML(t){
 }
 
 // JSONP callback that your Apps Script returns
-function ETN_mountApproved(resp){
+// Make callback definitely global (so JSONP can call it)
+window.ETN_mountApproved = function(resp){
   const mount = document.getElementById('approved');
   if (!mount) return;
   const items = (resp && resp.ok && Array.isArray(resp.items)) ? resp.items : [];
@@ -317,14 +318,30 @@ function ETN_mountApproved(resp){
     items.length ? items.map(itemCardHTML).join('') :
     `<div class="muted">No approved testimonials yet.</div>`
   );
-}
+};
 
-// Request Approved via JSONP (adds a cache-buster)
+
 function fetchApprovedJSONP(){
+  // Remove any prior jsonp tag
+  const old = document.getElementById('approvedJsonpTag');
+  if (old) old.remove();
+
   const s = document.createElement('script');
+  s.id  = 'approvedJsonpTag';
   s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
+  s.onerror = () => {
+    console.warn('Approved JSONP failed to load.');
+    const mount = document.getElementById('approved');
+    if (mount && !mount.dataset.failedOnce){
+      mount.dataset.failedOnce = '1';
+      mount.insertAdjacentHTML('beforeend',
+        `<div class="muted">Couldn’t load testimonials. Please refresh.</div>`
+      );
+    }
+  };
   document.head.appendChild(s);
 }
+
 // Initial load
 fetchApprovedJSONP();
 

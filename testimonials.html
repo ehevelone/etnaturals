@@ -147,6 +147,11 @@
 
           <label for="reviewText">Your experience</label>
           <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
+          <label class="checkbox" style="display:flex;gap:8px;align-items:flex-start;margin-top:6px">
+          <input type="checkbox" id="consentPublish" name="consent" value="Yes">
+          <span>I give ET Naturals permission to publish my testimonial (first name + last initial, city/state, and photo if provided).</span>
+          </label>
+
 
           <label for="reviewPhoto">Photo (optional)</label>
           <!-- no name=; we send base64 via hidden field -->
@@ -157,22 +162,35 @@
             <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
 
             <!-- FORCE NATIVE SUBMIT -->
-            <button class="open-form" type="submit" id="submitBtn"
-              onclick="return (function(btn){
-                var f = btn.form;
-                var file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
-                var hidden = document.getElementById('imageDataUrl');
-                function forceSubmit(){ HTMLFormElement.prototype.submit.call(f); }
-                if (!file){ hidden.value=''; forceSubmit(); return false; }
-                var ok = ['image/jpeg','image/png','image/webp'];
-                if (ok.indexOf(file.type) === -1){ alert('Use JPG, PNG, or WEBP.'); return false; }
-                if (file.size > 2*1024*1024){ alert('Image must be 2 MB or less.'); return false; }
-                var r = new FileReader();
-                r.onload  = function(){ hidden.value = r.result; forceSubmit(); };
-                r.onerror = function(){ alert('Could not read image.'); };
-                r.readAsDataURL(file);
-                return false;
-              })(this);">Submit</button>
+         <button class="open-form" type="submit" id="submitBtn"
+          onclick="return (function(btn){
+          var f = btn.form;
+          var file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
+          var hidden = document.getElementById('imageDataUrl');
+
+          // NEW: require consent checkbox
+            var consent = document.getElementById('consentPublish');
+            if (!consent || !consent.checked){
+            alert('Please check the consent box to submit.');
+            return false;
+          } 
+
+          function forceSubmit(){ HTMLFormElement.prototype.submit.call(f); }
+
+          if (!file){ hidden.value=''; forceSubmit(); return false; }
+
+          var ok = ['image/jpeg','image/png','image/webp'];
+          if (ok.indexOf(file.type) === -1){ alert('Use JPG, PNG, or WEBP.'); return false; }
+          if (file.size > 2*1024*1024){ alert('Image must be 2 MB or less.'); return false; }
+
+          var r = new FileReader();
+          r.onload  = function(){ hidden.value = r.result; forceSubmit(); };
+          r.onerror = function(){ alert('Could not read image.'); };
+          r.readAsDataURL(file);
+          return false; // prevent normal submit; we call native submit above
+          })(this);">Submit
+        </button>
+
           </div>
         </form>
       </div>

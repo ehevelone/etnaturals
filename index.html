@@ -97,6 +97,20 @@
       background:linear-gradient(135deg,#f7f2e6,#e9e1cf);
       border:1px solid #0002; overflow:hidden;
     }
+    /* Default: thumbnails crop to fill */
+.shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Use on any card where you want the full image to fit inside */
+.shot.fit img {
+  object-fit: contain;     /* show the whole image */
+  object-position: center; /* keep it centered */
+  background: #fff;        /* optional: clean letterbox */
+}
+
     .price{ font-size:28px; font-weight:800; color:var(--green) }
     .fine{ font-size:12px; color:#436055; text-align:center; margin:18px 20px 0 }
 
@@ -174,21 +188,22 @@
     <h2 id="shop" class="section">Shop</h2>
     <section class="grid cols-3">
 
-      <!-- Root Renewal (live) -->
-      <article class="product card pad">
-        <div class="shot">
-          <img src="images/root-renewal-hero.jpg" href="root-renewal.html" alt="Root Renewal"
-               style="width:100%;height:100%;object-fit:cover"
-               onerror="this.onerror=null;this.src='images/placeholder.jpg'">
-        </div>
-        <h3 style="margin:8px 0 4px">Root Renewal</h3>
-        <p class="fine" style="margin:0;color:#355448">Lightweight scalp serum for fuller-looking hair.</p>
-        <div class="price" style="margin-top:8px">$19.99</div>
-        <div class="cta">
-          <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
-          <a class="btn btn-secondary" href="root-renewal.html">Details</a>
-        </div>
-      </article>
+<article class="product card pad">
+  <div class="shot fit">
+    <img
+      src="images/products/root-renewal.jpg"  <!-- or your root-renewal-hero image -->
+      alt="Root Renewal"
+      onerror="this.onerror=null;this.src='images/placeholder.jpg'">
+  </div>
+  <h3 style="margin:8px 0 4px">Root Renewal</h3>
+  <p class="fine" style="margin:0;color:#355448">Lightweight scalp serum for fuller-looking hair.</p>
+  <div class="price" style="margin-top:8px">$29</div>
+  <div class="cta">
+    <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
+    <a class="btn btn-secondary" href="root-renewal.html">Details</a>
+  </div>
+</article>
+
 
 <!-- Coming soon #1 -->
 <article class="product card pad">

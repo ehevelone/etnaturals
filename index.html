@@ -6,11 +6,11 @@
   <meta name="description" content="ET Naturals Root Renewal — small-batch herbal hair & scalp treatment with Castor, Batana, Rosemary, and Clove oils. Nourish roots, support healthy hair, and simplify care with subscription." />
   <meta name="theme-color" content="#215033" />
 
-  <!-- Favicons (relative so they work locally & on Netlify) -->
+  <!-- Favicons -->
   <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="icon" type="image/png" href="images/favicon.png?v=2" sizes="32x32">
 
-  <!-- Social (absolute URLs are fine) -->
+  <!-- Social -->
   <meta property="og:type" content="product">
   <meta property="og:title" content="ET Naturals — Root Renewal">
   <meta property="og:description" content="Small-batch herbal hair & scalp treatment with castor, batana, rosemary, and clove oils. Subscribe $14.99 or buy once $19.99.">
@@ -48,9 +48,7 @@
     }
     .container{ max-width:1100px; margin:0 auto; padding:18px 20px; }
     .logo-img{ height:60px; width:auto }
-    .site-header .container{
-      display:flex; align-items:center; gap:16px;
-    }
+    .site-header .container{ display:flex; align-items:center; gap:16px; }
     .site-header .nav{
       display:flex; flex-wrap:wrap; gap:14px;
       margin-left:auto; justify-content:flex-end; text-align:right;
@@ -75,9 +73,7 @@
     .subtitle{ margin:8px 0 16px; color:var(--brown); font-weight:600 }
     .badge{ display:inline-block; background:var(--green); color:#fff; padding:6px 10px; border-radius:999px; font-size:13px; font-weight:700; letter-spacing:.4px }
     .cta{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px }
-    .btn{
-      appearance:none; border:none; border-radius:999px; padding:12px 18px; font-weight:800; cursor:pointer
-    }
+    .btn{ appearance:none; border:none; border-radius:999px; padding:12px 18px; font-weight:800; cursor:pointer }
     .btn-primary{ background:var(--green); color:#fff }
     .btn-secondary{ background:#fff; color:var(--green); border:2px solid var(--green) }
     .list{ padding-left:18px; margin:14px 0 0; color:#33473d }
@@ -92,24 +88,19 @@
       margin:36px 20px 12px;
     }
     .product{ display:grid; gap:14px }
+
     .shot{
-      aspect-ratio:4/3; border-radius:16px;
-      background:linear-gradient(135deg,#f7f2e6,#e9e1cf);
-      border:1px solid #0002; overflow:hidden;
+      aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+      background:#fff; border:1px solid #0002;
     }
     /* Default: thumbnails crop to fill */
-.shot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Use on any card where you want the full image to fit inside */
-.shot.fit img {
-  object-fit: contain;     /* show the whole image */
-  object-position: center; /* keep it centered */
-  background: #fff;        /* optional: clean letterbox */
-}
+    .shot img{ width:100%; height:100%; object-fit:cover; }
+    /* Use on cards where you want the full image to fit inside */
+    .shot.fit img{
+      object-fit:contain;
+      object-position:center;
+      background:#fff;
+    }
 
     .price{ font-size:28px; font-weight:800; color:var(--green) }
     .fine{ font-size:12px; color:#436055; text-align:center; margin:18px 20px 0 }
@@ -136,7 +127,7 @@
 </head>
 <body>
 
-  <!-- Header (shared pattern, right-aligned nav) -->
+  <!-- Header -->
   <header class="site-header">
     <div class="container">
       <a href="index.html" class="brand" aria-label="ET Naturals — Home">
@@ -156,7 +147,7 @@
   <!-- ===== MAIN ===== -->
   <main>
 
-    <!-- HERO (brand-first) -->
+    <!-- HERO -->
     <section class="hero">
       <div class="card pad">
         <span class="badge">ET Naturals</span>
@@ -184,68 +175,58 @@
       </div>
     </section>
 
-    <!-- SHOP (Root Renewal live + placeholders) -->
+    <!-- SHOP -->
     <h2 id="shop" class="section">Shop</h2>
     <section class="grid cols-3">
 
-<article class="product card pad">
-  <div class="shot fit">
-    <img
-      src="images/products/root-renewal-hero.jpg"  
-      alt="Root Renewal"
-      onerror="this.onerror=null;this.src='images/root-renewal-hero.jpg'">
-  </div>
-  <h3 style="margin:8px 0 4px">Root Renewal</h3>
-  <p class="fine" style="margin:0;color:#355448">Lightweight scalp serum for fuller-looking hair.</p>
-  <div class="price" style="margin-top:8px">$29</div>
-  <div class="cta">
-    <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
-    <a class="btn btn-secondary" href="root-renewal.html">Details</a>
-  </div>
-</article>
+      <!-- Root Renewal (use hero image, fit inside) -->
+      <article class="product card pad">
+        <div class="shot fit">
+          <img
+            src="images/root-renewal-hero.jpg"
+            alt="Root Renewal"
+            onerror="this.onerror=null;this.src='images/placeholder.jpg'">
+        </div>
+        <h3 style="margin:8px 0 4px">Root Renewal</h3>
+        <p class="fine" style="margin:0;color:#355448">Lightweight scalp serum for fuller-looking hair.</p>
+        <div class="price" style="margin-top:8px">$29</div>
+        <div class="cta">
+          <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
+          <a class="btn btn-secondary" href="root-renewal.html">Details</a>
+        </div>
+      </article>
 
+      <!-- Coming soon #1 (static image placeholder) -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/coming-soon.png" alt="Coming soon"
+               onerror="this.onerror=null;this.src='images/coming-soon.png'">
+        </div>
+        <h3 style="margin:8px 0 4px">Coming Soon!</h3>
+        <p class="fine" style="margin:0;color:#355448"></p>
+        <div class="cta">
+          <a class="btn btn-secondary"
+             href="mailto:etnaturals@outlook.com?subject=Notify%20me&body=Please%20let%20me%20know%20when%20the%20new%20product%20is%20available.">
+            Notify me
+          </a>
+        </div>
+      </article>
 
-<!-- Coming soon #1 -->
-<article class="product card pad">
-  <div class="shot" style="position:relative">
-    <img
-      loading="lazy"
-      alt="Clarifying Rinse — coming soon"
-      style="width:100%;height:100%;object-fit:cover"
-      src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900' viewBox='0 0 1200 900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23f7f2e6'/><stop offset='1' stop-color='%23e9e1cf'/></linearGradient><pattern id='p' patternUnits='userSpaceOnUse' width='40' height='40'><rect width='40' height='40' fill='none'/><path d='M0 40 L40 0 M-10 30 L10 50 M30 -10 L50 10' stroke='%2300000014' stroke-width='8'/></pattern></defs><rect width='1200' height='900' fill='url(%23g)'/><rect width='1200' height='900' fill='url(%23p)'/><rect x='48' y='48' width='1104' height='804' fill='none' stroke='%2300000022' rx='24' ry='24'/><text x='50%25' y='48%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' font-weight='800' font-size='96' fill='%23215033'>COMING SOON</text><text x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' font-weight='600' font-size='28' fill='%236b4b3e'>Clarifying Rinse</text></svg>">
-    <span class="badge" style="position:absolute;top:10px;left:10px;background:#6b4b3e">Coming soon</span>
-  </div>
-  <h3 style="margin:8px 0 4px">Coming Soon!</h3>
-  <p class="fine" style="margin:0;color:#355448"></p>
-  <div class="cta">
-    <a class="btn btn-secondary"
-       href="mailto:etnaturals@outlook.com?subject=Clarifying%20Rinse%20notify&body=Please%20let%20me%20know%20when%20Clarifying%20Rinse%20is%20available.">
-      Notify me
-    </a>
-  </div>
-</article>
-
-
-<!-- Coming soon #1 -->
-<article class="product card pad">
-  <div class="shot" style="position:relative">
-    <img
-      loading="lazy"
-      alt="Clarifying Rinse — coming soon"
-      style="width:100%;height:100%;object-fit:cover"
-      src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900' viewBox='0 0 1200 900'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23f7f2e6'/><stop offset='1' stop-color='%23e9e1cf'/></linearGradient><pattern id='p' patternUnits='userSpaceOnUse' width='40' height='40'><rect width='40' height='40' fill='none'/><path d='M0 40 L40 0 M-10 30 L10 50 M30 -10 L50 10' stroke='%2300000014' stroke-width='8'/></pattern></defs><rect width='1200' height='900' fill='url(%23g)'/><rect width='1200' height='900' fill='url(%23p)'/><rect x='48' y='48' width='1104' height='804' fill='none' stroke='%2300000022' rx='24' ry='24'/><text x='50%25' y='48%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' font-weight='800' font-size='96' fill='%23215033'>COMING SOON</text><text x='50%25' y='60%25' dominant-baseline='middle' text-anchor='middle' font-family='Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif' font-weight='600' font-size='28' fill='%236b4b3e'>Clarifying Rinse</text></svg>">
-    <span class="badge" style="position:absolute;top:10px;left:10px;background:#6b4b3e">Coming soon</span>
-  </div>
-  <h3 style="margin:8px 0 4px">Coming Soon!</h3>
-  <p class="fine" style="margin:0;color:#355448"></p>
-  <div class="cta">
-    <a class="btn btn-secondary"
-       href="mailto:etnaturals@outlook.com?subject=Clarifying%20Rinse%20notify&body=Please%20let%20me%20know%20when%20Clarifying%20Rinse%20is%20available.">
-      Notify me
-    </a>
-  </div>
-</article>
-
+      <!-- Coming soon #2 (same clean placeholder) -->
+      <article class="product card pad">
+        <div class="shot">
+          <img src="images/coming-soon.png" alt="Coming soon"
+               onerror="this.onerror=null;this.src='images/coming-soon.png'">
+        </div>
+        <h3 style="margin:8px 0 4px">Coming Soon!</h3>
+        <p class="fine" style="margin:0;color:#355448"></p>
+        <div class="cta">
+          <a class="btn btn-secondary"
+             href="mailto:etnaturals@outlook.com?subject=Notify%20me&body=Please%20let%20me%20know%20when%20the%20new%20product%20is%20available.">
+            Notify me
+          </a>
+        </div>
+      </article>
 
     </section>
 
@@ -285,8 +266,6 @@
     </div>
   </footer>
 
-  <script>
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>

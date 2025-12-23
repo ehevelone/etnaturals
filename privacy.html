@@ -1,0 +1,159 @@
+<!-- replace your two <style> blocks with this single one -->
+<style>
+  :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+  *{ box-sizing:border-box }
+  body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text) }
+  a{ color:var(--accent); text-decoration:none }
+
+  /* Shared layout */
+  .container{ max-width:1100px; margin:0 auto; padding:20px; }
+  .logo-img{ display:block; height:60px; width:auto; }
+
+  /* Site header (sticky + right-aligned nav) */
+  .site-header{
+    position:sticky; top:0; z-index:1000;
+    background:var(--card);
+    border-bottom:1px solid var(--stroke);
+    backdrop-filter:saturate(120%) blur(6px);
+  }
+  .site-header .container{
+    display:flex; align-items:center; gap:16px;
+  }
+  .site-header .nav{
+    display:flex; flex-wrap:wrap; gap:14px;
+    margin-left:auto; justify-content:flex-end; text-align:right;
+  }
+  .site-header .nav a{ color:var(--text); font-weight:600; }
+  .site-header .nav a:hover{ text-decoration:underline; }
+
+  /* Page content */
+  .wrap{ max-width:920px; margin:18px auto 40px; padding:0 20px; display:grid; gap:20px }
+  .card{ background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); border:1px solid var(--stroke) }
+  h1{ margin:0 0 6px }
+  h2{ margin:18px 0 8px }
+  .muted{ color:var(--muted) }
+  ul{ margin:0; padding-left:18px }
+
+  /* Footer nav */
+  .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center }
+  .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px }
+  .footer-nav a{ color:var(--text); opacity:.9 }
+  .footer-nav a:hover{ opacity:1; text-decoration:underline }
+  .footer-nav .legal{ font-size:12px; opacity:.75 }
+</style>
+<!-- replace your <header> block with this -->
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img
+        src="images/et-naturals-logo.png"
+        alt="ET Naturals Logo"
+        class="logo-img"
+        onerror="this.onerror=null;this.src='images/logo.png'">
+    </a>
+    <nav class="nav">
+      <a href="index.html#shop">Order</a>
+      <a href="about.html">Our Story</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="faq.html">FAQ</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+
+
+  <main class="wrap">
+    <section class="card">
+      <h1>Privacy Policy</h1>
+      <p class="muted">Last updated: <span id="updated"></span></p>
+      <p>We respect your privacy. This policy explains what we collect, how we use it, and the choices you have.</p>
+    </section>
+
+    <section class="card">
+      <h2>Who we are</h2>
+      <p>ET Naturals (“we”, “us”, “our”). Contact: <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
+    </section>
+
+    <section class="card">
+      <h2>Information we collect</h2>
+      <ul>
+        <li><b>Orders/Payments.</b> When you purchase, you’re redirected to <b>PayPal</b> or <b>Venmo</b>. Those providers process your payment details. We do <b>not</b> receive or store card numbers or bank info.</li>
+        <li><b>Testimonials.</b> If you submit a testimonial (Google Forms), we collect what you enter (e.g., name, location, rating, comments). Submissions are reviewed before publishing.</li>
+        <li><b>Messages & email.</b> If you email us or submit a site form, we keep the info needed to reply and support you.</li>
+        <li><b>Basic usage data.</b> Our host (Netlify) may log standard data (IP, browser, pages viewed) for security/operations.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>How we use information</h2>
+      <ul>
+        <li>Fulfill and support orders.</li>
+        <li>Moderate and display testimonials you approve for publication.</li>
+        <li>Respond to questions and provide customer service.</li>
+        <li>Improve our website and prevent abuse/fraud.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Sharing</h2>
+      <p>We share data only with service providers we use to run the site:</p>
+      <ul>
+        <li><b>PayPal / Venmo</b> for payments.</li>
+        <li><b>Google Forms & Sheets</b> for testimonial collection/moderation.</li>
+        <li><b>Netlify</b> for site hosting (and Netlify Forms, if enabled).</li>
+      </ul>
+      <p>We don’t sell your personal information.</p>
+    </section>
+
+    <section class="card">
+      <h2>Cookies</h2>
+      <p>Our pages are mostly cookie-light. Third-party services (e.g., PayPal, Venmo, Google) may set cookies when their content is used. You can control cookies in your browser settings.</p>
+    </section>
+
+    <section class="card">
+      <h2>Data retention</h2>
+      <p>Order/support records are kept as needed for business, legal, and tax purposes. Testimonials are kept until you ask us to remove them or we remove them during moderation.</p>
+    </section>
+
+    <section class="card">
+      <h2>Your choices</h2>
+      <ul>
+        <li>Request a copy, correction, or deletion of your info: <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</li>
+        <li>Ask us to remove a published testimonial anytime.</li>
+      </ul>
+      <p class="muted" style="margin-top:6px;">If you’re in a region with specific privacy rights (e.g., California/EEA), contact us and we’ll honor applicable requests.</p>
+    </section>
+
+    <section class="card">
+      <h2>Children</h2>
+      <p>Our products and site aren’t directed to children under 13. We don’t knowingly collect children’s personal information.</p>
+    </section>
+
+    <section class="card">
+      <h2>Changes</h2>
+      <p>We may update this policy as we add features or services. We’ll post updates here and adjust the “Last updated” date.</p>
+    </section>
+  </main>
+
+  <nav class="footer-nav">
+    <div class="links">
+      <a href="index.html#shop">Shop</a>
+      <a href="about.html">About</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="index.html#faq">FAQ</a>
+      <a href="order.html">Checkout</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+    <div class="legal">© <span id="year"></span> ET Naturals</div>
+  </nav>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById('updated').textContent =
+      new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAQ — ET Naturals</title>
+  <style>
+    :root { --ink:#111; --muted:#666; --bg:#fff; --accent:#0f766e; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--ink); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif; }
+
+    /* Page scaffold */
+    .wrap { max-width: 860px; margin:0 auto; padding: clamp(16px, 2.5vw, 28px); }
+    h1 { font-size: clamp(28px, 3.6vw, 40px); margin: 8px 0 6px; letter-spacing:-0.02em; }
+    p { margin: 12px 0; }
+    .muted { color: var(--muted); }
+    a { color: var(--accent); }
+
+    /* FAQ blocks */
+    details { border:1px solid #eee; border-radius:12px; padding: 10px 14px; margin:12px 0; background:#fff; }
+    summary { cursor:pointer; font-weight:600; }
+    details[open] { border-color:#d7efec; background:#f7fffe; }
+    .badge { display:inline-block; font-size:12px; background:#eef8f7; color:#0b5e57; border:1px solid #d7efec; padding:2px 8px; border-radius: 999px; }
+
+    footer { border-top:1px solid #eee; margin-top: 28px; }
+
+    /* --- Consistent site header (right-aligned nav) --- */
+    .site-header { border-bottom:1px solid #eee; background:#fafafa; }
+    .site-header .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: clamp(16px, 2.5vw, 28px);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .site-header .logo-img { height: 40px; width:auto; display:block; }
+    .site-header .nav {
+      display:flex;
+      flex-wrap:wrap;
+      gap:14px;
+      margin-left:auto;         /* push nav to the right */
+      justify-content:flex-end; /* keep right-aligned on wrap */
+      text-align:right;
+    }
+    .site-header .nav a {
+      color: var(--ink);
+      text-decoration: none;
+      opacity: .9;
+    }
+    .site-header .nav a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <div class="brand">
+      <a href="index.html" class="logo">
+        <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img"
+             onerror="this.onerror=null;this.src='images/logo.png'">
+      </a>
+    </div>
+    <nav class="nav">
+      <a href="index.html#shop">Order</a>
+      <a href="about.html">Our Story</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="faq.html">FAQ</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1>FAQ</h1>
+
+  <details>
+    <summary>Eligibility & Account</summary>
+    <p>You must be 18+. Keep your login safe—purchases made under your account are your responsibility.</p>
+  </details>
+
+  <details>
+    <summary>Orders, Pricing & Payments</summary>
+    <p>Prices may change; we charge your chosen method through a secure processor (e.g., PayPal/Venmo/card). We may cancel/refund for errors or suspected fraud.</p>
+  </details>
+
+  <details>
+    <summary>Subscriptions (if offered)</summary>
+    <p>If you choose auto-deliveries, they renew until you cancel before your next bill date. Partial periods aren’t prorated unless required by law.</p>
+  </details>
+
+  <details>
+    <summary>Shipping, Risk of Loss & Delivery</summary>
+    <p>We ship to the destinations shown at checkout. Delivery times are estimates. Risk of loss passes to you when the carrier receives the package—please inspect your order on arrival.</p>
+  </details>
+
+  <details>
+    <summary>Returns & Refunds</summary>
+    <p>Check our <a href="/refunds.html">Returns & Refunds Policy</a> for windows, condition rules, and how to start a return.</p>
+  </details>
+
+  <details>
+    <summary>Product Safety & Non-Medical Use</summary>
+    <p>For external use only. Patch test first. Stop use if irritation occurs. Our products aren’t intended to diagnose, treat, cure, or prevent disease. Review ingredients and consult your physician if needed.</p>
+  </details>
+
+  <details>
+    <summary>Intellectual Property</summary>
+    <p>Our name, logo, site content, and product images are protected. Please don’t copy or reuse without permission.</p>
+  </details>
+
+  <details>
+    <summary>Acceptable Use</summary>
+    <p>Don’t break laws, hack, scrape, or upload harmful content. No automated bots without permission.</p>
+  </details>
+
+  <details>
+    <summary>Reviews & User Content</summary>
+    <p>Share only content you own. You allow us to show it on the site and in marketing. We may remove content that violates our Terms.</p>
+  </details>
+
+  <details>
+    <summary>Marketing Communications</summary>
+    <p>We send transactional emails about your order and optional promotions. You can unsubscribe from promos anytime. Standard rates may apply for texts.</p>
+  </details>
+
+  <details>
+    <summary>Third-Party Services</summary>
+    <p>Payment, shipping, and other linked tools have their own policies. Your use of those services is subject to their terms.</p>
+  </details>
+
+  <details>
+    <summary>Disclaimers</summary>
+    <p>Products and the site are provided “as is” to the extent the law allows.</p>
+  </details>
+
+  <details>
+    <summary>Limitation of Liability</summary>
+    <p>We’re not liable for indirect or special damages. Any claim is capped at what you paid for the product.</p>
+  </details>
+
+  <details>
+    <summary>Indemnification</summary>
+    <p>If you misuse the site or breach our Terms, you agree to cover resulting claims and costs.</p>
+  </details>
+
+  <details>
+    <summary>Dispute Resolution & Governing Law</summary>
+    <p>Nebraska law applies; disputes are handled in Douglas County, Nebraska. No class actions.</p>
+  </details>
+
+  <details>
+    <summary>Changes to the Terms</summary>
+    <p>If we change the Terms, we’ll update the page and date. Using the site means you accept updates.</p>
+  </details>
+
+  <details>
+    <summary>Contact</summary>
+    <p>Email us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>. Mailing address available upon request; a returns address will be provided during the RMA process.</p>
+  </details>
+
+  <p class="muted">Need more detail? See the full <a href="/terms.html">Terms of Service</a>, <a href="/privacy.html">Privacy Policy</a>, and <a href="/refunds.html">Returns & Refunds Policy</a>.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="muted">© <span id="y"></span> ET Naturals</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+</script>
+
+<!-- Structured data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type":"Question","name":"Eligibility & Account","acceptedAnswer":{"@type":"Answer","text":"You must be 18+. Keep your login safe—purchases made under your account are your responsibility."}},
+    {"@type":"Question","name":"Orders, Pricing & Payments","acceptedAnswer":{"@type":"Answer","text":"Prices may change; we charge your chosen method through a secure processor. We may cancel/refund for errors or suspected fraud."}},
+    {"@type":"Question","name":"Subscriptions (if offered)","acceptedAnswer":{"@type":"Answer","text":"Auto-deliveries renew until you cancel before your next bill date. Partial periods aren’t prorated unless required by law."}},
+    {"@type":"Question","name":"Shipping, Risk of Loss & Delivery","acceptedAnswer":{"@type":"Answer","text":"We ship to the destinations shown at checkout. Delivery times are estimates. Risk of loss passes to you when the carrier receives the package—please inspect your order on arrival."}},
+    {"@type":"Question","name":"Returns & Refunds","acceptedAnswer":{"@type":"Answer","text":"See our Returns & Refunds Policy for windows, condition rules, and how to start a return."}},
+    {"@type":"Question","name":"Product Safety & Non-Medical Use","acceptedAnswer":{"@type":"Answer","text":"External use only. Patch test first. Stop use if irritation occurs. Not intended to diagnose, treat, cure, or prevent disease."}},
+    {"@type":"Question","name":"Intellectual Property","acceptedAnswer":{"@type":"Answer","text":"Our name, logo, site content, and product images are protected. Don’t copy or reuse without permission."}},
+    {"@type":"Question","name":"Acceptable Use","acceptedAnswer":{"@type":"Answer","text":"Don’t break laws, hack, scrape, or upload harmful content. No automated bots without permission."}},
+    {"@type":"Question","name":"Reviews & User Content","acceptedAnswer":{"@type":"Answer","text":"Share only content you own. You allow us to show it on the site and in marketing. We may remove content that violates our Terms."}},
+    {"@type":"Question","name":"Marketing Communications","acceptedAnswer":{"@type":"Answer","text":"We send transactional emails and optional promos. You can unsubscribe from promos anytime. Standard rates may apply for texts."}},
+    {"@type":"Question","name":"Third-Party Services","acceptedAnswer":{"@type":"Answer","text":"Payment, shipping, and other linked tools have their own policies. Your use of those services is subject to their terms."}},
+    {"@type":"Question","name":"Disclaimers","acceptedAnswer":{"@type":"Answer","text":"Products and the site are provided ‘as is’ to the extent the law allows."}},
+    {"@type":"Question","name":"Limitation of Liability","acceptedAnswer":{"@type":"Answer","text":"We’re not liable for indirect or special damages. Any claim is capped at what you paid for the product."}},
+    {"@type":"Question","name":"Indemnification","acceptedAnswer":{"@type":"Answer","text":"If you misuse the site or breach our Terms, you agree to cover resulting claims and costs."}},
+    {"@type":"Question","name":"Dispute Resolution & Governing Law","acceptedAnswer":{"@type":"Answer","text":"Nebraska law applies; disputes are handled in Douglas County, Nebraska. No class actions."}},
+    {"@type":"Question","name":"Changes to the Terms","acceptedAnswer":{"@type":"Answer","text":"If we change the Terms, we’ll update the page and date. Using the site means you accept updates."}},
+    {"@type":"Question","name":"Contact","acceptedAnswer":{"@type":"Answer","text":"Email etnaturals@outlook.com. Mailing address available upon request; a returns address will be provided during the RMA process."}}
+  ]
+}
+</script>
+</body>
+</html>

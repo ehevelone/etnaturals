@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ET Naturals — Clean, Plant-Forward Essentials for Body & Home</title>
+  <meta name="description" content="ET Naturals creates small-batch, plant-forward essentials for body and home — from scalp care to clean household products and candles." />
+  <meta name="theme-color" content="#215033" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+  <link rel="icon" type="image/png" href="images/favicon.png?v=2" sizes="32x32">
+
+  <!-- Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ET Naturals — Clean Essentials for Everyday Living">
+  <meta property="og:description" content="Small-batch, plant-forward products for body and home. Clean ingredients. Simple routines." />
+  <meta property="og:image" content="https://www.etnaturals.com/images/root-renewal-hero.jpg">
+  <meta property="og:url" content="https://www.etnaturals.com/">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA; --blue:#1b3f73;
+    }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; background:var(--beige); color:var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.55;
+    }
+    a{ color:var(--green); text-decoration:none }
+    img{ max-width:100%; display:block }
+
+    header.site-header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(240,233,218,.9);
+      backdrop-filter:saturate(120%) blur(6px);
+      border-bottom:1px solid #0002;
+    }
+    .container{ max-width:1100px; margin:0 auto; padding:18px 20px; }
+    .logo-img{ height:60px; width:auto }
+    .site-header .container{ display:flex; align-items:center; gap:16px; }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+      font-weight:600;
+    }
+
+    .hero{ display:grid; gap:26px; padding:56px 20px }
+    @media (min-width:900px){
+      .hero{ grid-template-columns:1.05fr .95fr; align-items:center }
+    }
+    .card{
+      background:rgba(255,255,255,.65);
+      border:1px solid #0002; border-radius:16px;
+      box-shadow:0 12px 28px rgba(0,0,0,.08);
+    }
+    .pad{ padding:24px }
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:clamp(28px,4vw,46px); line-height:1.1; margin:0;
+    }
+    .subtitle{ margin:8px 0 16px; color:var(--brown); font-weight:600 }
+    .badge{ display:inline-block; background:var(--green); color:#fff; padding:6px 10px; border-radius:999px; font-size:13px; font-weight:700; letter-spacing:.4px }
+    .cta{ display:flex; flex-wrap:wrap; gap:12px; margin-top:16px }
+    .btn{ appearance:none; border:none; border-radius:999px; padding:12px 18px; font-weight:800; cursor:pointer }
+    .btn-primary{ background:var(--green); color:#fff }
+    .btn-secondary{ background:#fff; color:var(--green); border:2px solid var(--green) }
+    .list{ padding-left:18px; margin:14px 0 0; color:#33473d }
+
+    .grid{ display:grid; gap:16px; padding:0 20px 20px }
+    @media (min-width:900px){
+      .grid.cols-3{ grid-template-columns:repeat(3,1fr) }
+      .grid.cols-2{ grid-template-columns:repeat(2,1fr) }
+    }
+    h2.section{
+      font-family:"Playfair Display",serif; font-size:clamp(24px,3vw,34px);
+      margin:36px 20px 12px;
+    }
+    .product{ display:grid; gap:14px }
+
+    .shot{
+      aspect-ratio:4/3; border-radius:16px; overflow:hidden;
+      background:#fff; border:1px solid #0002;
+    }
+    .shot img{ width:100%; height:100%; object-fit:cover; }
+    .shot.fit img{ object-fit:contain; background:#fff }
+
+    .price{ font-size:28px; font-weight:800; color:var(--green) }
+    .fine{ font-size:12px; color:#436055; text-align:center; margin:18px 20px 0 }
+
+    .hero-img{
+      width:100%; height:auto; border-radius:16px; border:1px solid #0002;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    footer{
+      margin-top:50px; border-top:1px solid #0002;
+      background:rgba(255,255,255,.55);
+    }
+    .footer-inner{
+      max-width:1100px; margin:0 auto; padding:16px 20px;
+      display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;
+      color:#2d3a33;
+    }
+    .footer-links{ display:flex; gap:14px; flex-wrap:wrap }
+    .footer-links a{ color:var(--green) }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" aria-label="ET Naturals — Home">
+      <img src="images/et-naturals-logo.png" alt="ET Naturals Logo" class="logo-img">
+    </a>
+    <nav class="nav">
+      <a href="#shop">Shop</a>
+      <a href="about.html">Our Philosophy</a>
+      <a href="faq.html">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="card pad">
+    <span class="badge">ET Naturals</span>
+    <h1 class="title">Simple Natural Essentials for Everyday Living</h1>
+    <p class="subtitle">
+      Small-batch, plant-forward products for body and home —
+      thoughtfully made to support simple, consistent routines.
+    </p>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="#shop">Shop Root Renewal</a>
+      <a class="btn btn-secondary" href="about.html">Our Philosophy</a>
+    </div>
+
+    <ul class="list">
+      <li>Plant-forward ingredients</li>
+      <li>No parabens, phthalates, or dyes</li>
+      <li>Small-batch production</li>
+    </ul>
+  </div>
+
+  <div class="card pad" style="display:grid;place-items:center">
+    <img class="hero-img" src="images/et-naturals-logo.png" alt="ET Naturals">
+  </div>
+</section>
+
+<h2 id="shop" class="section">Shop</h2>
+<p class="fine" style="margin:0 20px 16px;">
+Explore our growing collection of clean, natural essentials for body and home.
+</p>
+
+<section class="grid cols-3">
+
+  <article class="product card pad">
+    <div class="shot fit">
+      <img src="images/root-renewal-hero.jpg" alt="Root Renewal">
+    </div>
+    <h3>Root Renewal — Scalp Oil</h3>
+    <p class="fine">Lightweight, plant-infused scalp oil designed for simple, consistent care.</p>
+    <div class="price">$19.99</div>
+    <div class="cta">
+      <a class="btn btn-primary" href="order.html?sku=root-renewal">Add to cart</a>
+      <a class="btn btn-secondary" href="root-renewal.html">Details</a>
+    </div>
+  </article>
+
+  <article class="product card pad">
+    <div class="shot">
+      <img src="images/coming-soon.jpg" alt="Coming soon">
+    </div>
+    <h3>Home Essentials</h3>
+    <p class="fine">Plant-based laundry and dishwasher products currently in development.</p>
+    <div class="cta">
+      <a class="btn btn-secondary" href="mailto:etnaturals@outlook.com?subject=Notify%20me">Notify me</a>
+    </div>
+  </article>
+
+  <article class="product card pad">
+    <div class="shot">
+      <img src="images/coming-soon.jpg" alt="Coming soon">
+    </div>
+    <h3>Clean-Burn Candles</h3>
+    <p class="fine">Hand-poured candles made with natural waxes and essential oils.</p>
+    <div class="cta">
+      <a class="btn btn-secondary" href="mailto:etnaturals@outlook.com?subject=Notify%20me">Notify me</a>
+    </div>
+  </article>
+
+</section>
+
+<p class="fine">Cosmetic and household products. Individual results vary. No medical claims are made.</p>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© <span id="y"></span> ET Naturals</span>
+    <nav class="footer-links">
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+      <a href="refunds.html">Returns</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</footer>
+
+<script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

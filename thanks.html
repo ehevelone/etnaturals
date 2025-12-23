@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Thank You — ET Naturals</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- One unified style block -->
+  <style>
+    :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+
+    /* Page base */
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    a { color:var(--accent); text-decoration:none; }
+
+    /* Layout + components you already use */
+    .wrap{max-width:720px;margin:12vh auto 0;padding:24px}
+    .card{background:var(--card);border-radius:14px;padding:28px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+    h1{margin:0 0 8px}
+    p{color:var(--muted);margin:.5rem 0 0}
+    .row{display:grid;gap:14px;margin-top:16px}
+    .summary{border:1px solid var(--stroke);border-radius:12px;padding:14px;background:#0f1012}
+    .line{display:flex;justify-content:space-between;gap:12px}
+    .total{font-weight:800}
+    .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .btn{appearance:none;border:1px solid var(--stroke);background:#0f1012;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
+    .emailbox{display:flex;gap:8px;flex-wrap:wrap}
+    input[type="email"]{background:#0f1012;border:1px solid var(--stroke);color:var(--text);padding:10px 12px;border-radius:10px;min-width:240px}
+    .note{font-size:12px;color:#9aa3ae;margin-top:8px}
+    .sent{font-size:12px;color:#9bd18f;margin-top:8px;display:none}
+
+    /* Shared header (right-aligned nav, sticky) */
+    .container { max-width:1100px; margin:0 auto; padding:20px; }
+    .logo-img { display:block; height:60px; width:auto; }
+
+    .site-header{
+      position:sticky; top:0; z-index:1000;
+      background:var(--card); border-bottom:1px solid var(--stroke);
+      backdrop-filter:saturate(120%) blur(6px);
+    }
+    .site-header .container{ display:flex; align-items:center; gap:16px; }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+    }
+    .site-header .nav a{ color:var(--text); font-weight:600; }
+    .site-header .nav a:hover{ text-decoration:underline; }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a href="index.html" class="brand">
+        <img
+          src="images/et-naturals-logo.png"
+          alt="ET Naturals Logo"
+          class="logo-img"
+          onerror="this.onerror=null;this.src='images/logo.png'">
+      </a>
+      <nav class="nav">
+        <a href="index.html#shop">Order</a>
+        <a href="about.html">Our Story</a>
+        <a href="index.html#ingredients">Ingredients</a>
+        <a href="faq.html">FAQ</a>
+        <a href="testimonials.html">Testimonials</a>
+        <a href="order.html">Checkout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Thank-you content (keep or replace as needed) -->
+  <main class="wrap">
+    <section class="card">
+      <h1>Thank you for your order!</h1>
+      <p>We’ve emailed your receipt. Your items will ship soon.</p>
+
+      <div class="row" style="margin-top:18px">
+        <div class="summary">
+          <div class="line"><span>Order</span><span>#ETN-12345</span></div>
+          <div class="line"><span>Delivery</span><span>3–5 business days</span></div>
+          <div class="line total"><span>Total Paid</span><span>$—</span></div>
+        </div>
+
+        <div class="actions">
+          <a class="btn" href="index.html#shop">Continue Shopping</a>
+          <a class="btn" href="faq.html">See FAQ</a>
+        </div>
+
+        <p class="note">Questions? <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a></p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Thank you!</h1>
+      <p>We received your order. PayPal emailed a receipt. Your summary is below.</p>
+
+      <div id="summary" class="summary" aria-live="polite">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btnPrint">Print / Save PDF</button>
+        <div class="emailbox">
+          <input type="email" id="email" placeholder="your@email.com" aria-label="Email address">
+          <button class="btn" id="btnEmail">Email me this summary</button>
+        </div>
+      </div>
+
+      <p class="note">If anything looks off, reply to your PayPal receipt or email us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
+      <p class="sent" id="sent">Order notification sent.</p>
+
+      <!-- Hidden Netlify form (registered at build time) -->
+      <form name="order-notify" netlify netlify-honeypot="bot-field" hidden>
+        <input type="hidden" name="form-name" value="order-notify">
+        <input type="text"   name="plan">
+        <input type="text"   name="qty">
+        <input type="text"   name="unit">
+        <input type="text"   name="total">
+        <input type="text"   name="timestamp">
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Load the draft saved on order.html
+    const draft = (() => { try { return JSON.parse(localStorage.getItem('etn_order')||'null'); } catch { return null; } })();
+    const PLAN_LABEL = p => p==='subscribe' ? 'Subscription' : p==='bundle' ? 'Bundle (3-Pack)' : 'One-Time';
+    const fmt = n => Number(n).toFixed(2);
+
+    function renderSummary(){
+      const box = document.getElementById('summary');
+      if(!draft){
+        box.innerHTML = `
+          <div class="line"><span>Order</span><span>Not available</span></div>
+          <p class="note">We couldn’t load your selection. You can still print this page and use your PayPal email receipt as proof of purchase.</p>`;
+        return;
+      }
+      const date = new Date(draft.ts);
+      const planText = PLAN_LABEL(draft.plan);
+      const qtyText  = draft.plan==='subscribe' ? '—' : draft.qty;
+      const unitText = '$' + fmt(draft.unit) + (draft.plan==='subscribe' ? ' / 30 days' : '');
+      const totalText= '$' + fmt(draft.total);
+
+      box.innerHTML = `
+        <div class="line"><span>Plan</span><span>${planText}</span></div>
+        <div class="line"><span>Quantity</span><span>${qtyText}</span></div>
+        <div class="line"><span>Unit</span><span>${unitText}</span></div>
+        <div class="line total"><span>Total</span><span>${totalText}</span></div>
+        <div class="line"><span>Date</span><span>${date.toLocaleString()}</span></div>
+      `;
+    }
+
+    // Background submit to Netlify Forms (emails site owner)
+    function notifyOwner(){
+      const sent = document.getElementById('sent');
+      const formName = 'order-notify';
+      if(!draft){ return; }
+
+      const data = {
+        'form-name': formName,
+        plan: draft.plan,
+        qty:  draft.plan==='subscribe' ? '—' : String(draft.qty),
+        unit: draft.plan==='subscribe' ? '$' + fmt(draft.unit) + ' / 30 days' : '$' + fmt(draft.unit),
+        total: '$' + fmt(draft.total),
+        timestamp: draft.ts
+      };
+
+      // Build x-www-form-urlencoded body
+      const body = new URLSearchParams(data).toString();
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      })
+      .then(() => { if (sent) sent.style.display = 'block'; })
+      .catch(() => { /* ignore silently; PayPal email still covers you */ });
+    }
+
+    // Actions
+    document.getElementById('btnPrint').addEventListener('click', () => window.print());
+    document.getElementById('btnEmail').addEventListener('click', () => {
+      const to = document.getElementById('email').value.trim();
+      if(!to){ alert('Enter your email address first.'); return; }
+      const subject = encodeURIComponent('Your ET Naturals order summary');
+      const s = document.getElementById('summary').innerText.trim();
+      const body = encodeURIComponent(`Hello,\n\nHere is your order summary:\n\n${s}\n\nThank you!`);
+      window.location.href = `mailto:${encodeURIComponent(to)}?subject=${subject}&body=${body}`;
+    });
+
+    // Init
+    renderSummary();
+    notifyOwner(); // auto-send notify on load
+  </script>
+</body>
+</html>

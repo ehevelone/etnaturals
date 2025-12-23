@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Customer Testimonials — ET Naturals</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    a { color:var(--accent); text-decoration:none; }
+    header { max-width:920px; margin:28px auto 0; padding:0 20px; display:flex; align-items:center; justify-content:space-between; }
+    header .brand { font-weight:800; letter-spacing:.3px; }
+    .wrap { max-width:920px; margin:18px auto 40px; padding:0 20px; display:grid; gap:20px; }
+    .card { background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); border:1px solid var(--stroke); }
+    h1 { margin:0 0 6px; }
+    .muted { color:var(--muted); }
+    .grid { display:grid; gap:16px; }
+    @media(min-width:820px){ .grid.cols-2{ grid-template-columns:1fr 1fr; } }
+
+    /* Testimonial cards */
+    .t { display:grid; gap:8px; }
+    .who { display:flex; gap:10px; align-items:center; }
+    .avatar { width:40px; height:40px; border-radius:999px; background:#0f1012; border:1px solid var(--stroke); display:grid; place-items:center; font-weight:800; }
+    .stars { letter-spacing:2px; }
+    .stars .on { color:#FFD140; }
+    .quote { color:#dfe3e7; }
+    .meta { font-size:12px; color:var(--muted); }
+/* Show full image inside the box (no cropping) */
+.t img.review-photo{
+  display:block;
+  width:100%;
+  height:220px;            /* lock the box height */
+  object-fit:contain;      /* letterbox instead of cropping */
+  background:#0f1012;      /* subtle background for letterbox bars */
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  margin-bottom:8px;
+}
+
+
+    /* Modal form */
+    .open-form { appearance:none; border:1px solid var(--stroke); background:#0f1012; color:#f6f7f9; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.6); z-index:9999; }
+    .modal[aria-hidden="false"] { display:flex; }
+    .modal-dialog { width:min(900px, 96vw); background:var(--card); border:1px solid var(--stroke); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,.5); overflow:hidden; }
+    .modal-head { display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--stroke); }
+    .modal-head h3 { margin:0; font-size:16px; }
+    .modal-close { appearance:none; background:transparent; color:#f6f7f9; border:1px solid var(--stroke); border-radius:8px; padding:6px 10px; cursor:pointer; }
+    .modal-body { padding:0; }
+
+    /* Modal form fields */
+    .form { padding:14px; display:grid; gap:10px; }
+    .form input, .form select, .form textarea {
+      width:100%; background:#0f1012; border:1px solid var(--stroke);
+      color:var(--text); border-radius:10px; padding:10px;
+    }
+    .form button { cursor:pointer; }
+
+    /* Footer nav */
+    .footer-nav{ max-width:920px; margin:10px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
+    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
+    .footer-nav .legal{ font-size:12px; opacity:.75; }
+
+    /* Star rating input (bigger + left aligned) */
+    .rating-stars { display:inline-flex; flex-direction:row-reverse; gap:8px; align-items:center; justify-content:flex-start; }
+    .rating-stars input { position:absolute; left:-9999px; }
+    .rating-stars label { font-size:32px; line-height:1; cursor:pointer; color:#6b7280; user-select:none; padding:2px; }
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label,
+    .rating-stars input:checked ~ label { color:#FFD140; }
+    .rating-stars input:focus + label { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand"><a href="index.html">ET NATURALS</a></div>
+    <nav class="muted">
+      <a href="index.html#shop">Shop</a> •
+      <a href="about.html">About</a> •
+      <a href="order.html">Checkout</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <h1>Customer Testimonials</h1>
+      <p class="muted">Real experiences from our community. New submissions appear after approval below.</p>
+    </section>
+
+    <!-- Approved (live from Apps Script) -->
+    <section class="grid cols-2" id="approved"></section>
+
+    <!-- Submit a testimonial (opens modal) -->
+    <section class="card" id="submit">
+      <h2 style="margin:0 0 6px">Share your experience</h2>
+      <p class="muted">Your words help others.</p>
+      <button class="open-form" id="openFormBtn" type="button">Add your testimonial</button>
+      <p class="hint" style="margin-top:8px">Prefer email? Write us at <a href="mailto:etnaturals@outlook.com">etnaturals@outlook.com</a>.</p>
+    </section>
+
+    <section class="card">
+      <p class="muted">Cosmetic product. Individual experiences vary; no medical or therapeutic claims are made.</p>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div class="modal" id="formModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="formModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <h3 id="formModalTitle">Share your experience</h3>
+        <button class="modal-close" id="closeFormBtn" type="button" aria-label="Close">Close</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Hidden iframe keep page in place -->
+        <iframe name="submitSink" id="submitSink" style="display:none"></iframe>
+
+        <!-- SINGLE form (posts straight to Apps Script) -->
+        <form id="reviewForm" class="form"
+              action="https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec"
+              method="POST" target="submitSink" accept-charset="UTF-8" novalidate>
+          <input type="hidden" id="clientIp" name="ip" value="">
+          <input type="hidden" id="imageDataUrl" name="image_data_url" value="">
+
+          <div class="row" style="gap:10px">
+            <div style="flex:1;min-width:200px">
+              <label for="reviewName">Name</label>
+              <input id="reviewName" name="name" type="text" placeholder="Your name" required>
+            </div>
+            <div style="flex:1;min-width:200px">
+              <label for="reviewLoc">City, State (optional)</label>
+              <input id="reviewLoc" name="loc" type="text" placeholder="e.g., Omaha, NE">
+            </div>
+          </div>
+
+          <label>Rating</label>
+          <div class="rating-stars" aria-label="Rating from 1 to 5 stars">
+            <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="5 stars">★</label>
+            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">★</label>
+            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">★</label>
+            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">★</label>
+            <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">★</label>
+          </div>
+
+          <label for="reviewText">Your experience</label>
+          <textarea id="reviewText" name="text" rows="4" placeholder="What did you think?" required></textarea>
+          <label class="checkbox" style="display:flex;gap:8px;align-items:flex-start;margin-top:6px">
+          <input type="checkbox" id="consentPublish" name="consent" value="Yes">
+          <span>I give ET Naturals permission to publish my testimonial (first name + last initial, city/state, and photo if provided).</span>
+          </label>
+
+
+          <label for="reviewPhoto">Photo (optional)</label>
+          <!-- no name=; we send base64 via hidden field -->
+          <input id="reviewPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+          <img id="photoPreview" alt="" style="display:none;max-width:160px;border-radius:12px;margin-top:8px;border:1px solid var(--stroke)">
+
+          <div class="actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button type="button" class="modal-close" id="closeFormBtn2">Cancel</button>
+
+            <!-- FORCE NATIVE SUBMIT -->
+         <button class="open-form" type="submit" id="submitBtn"
+          onclick="return (function(btn){
+          var f = btn.form;
+          var file   = document.getElementById('reviewPhoto')?.files?.[0] || null;
+          var hidden = document.getElementById('imageDataUrl');
+
+          // NEW: require consent checkbox
+            var consent = document.getElementById('consentPublish');
+            if (!consent || !consent.checked){
+            alert('Please check the consent box to submit.');
+            return false;
+          } 
+
+          function forceSubmit(){ HTMLFormElement.prototype.submit.call(f); }
+
+          if (!file){ hidden.value=''; forceSubmit(); return false; }
+
+          var ok = ['image/jpeg','image/png','image/webp'];
+          if (ok.indexOf(file.type) === -1){ alert('Use JPG, PNG, or WEBP.'); return false; }
+          if (file.size > 2*1024*1024){ alert('Image must be 2 MB or less.'); return false; }
+
+          var r = new FileReader();
+          r.onload  = function(){ hidden.value = r.result; forceSubmit(); };
+          r.onerror = function(){ alert('Could not read image.'); };
+          r.readAsDataURL(file);
+          return false; // prevent normal submit; we call native submit above
+          })(this);">Submit
+        </button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer nav -->
+  <nav class="footer-nav">
+    <div class="links">
+      <a href="index.html#shop">Shop</a>
+      <a href="about.html">About</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="faq.html">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </div>
+    <div class="legal">© <span id="year"></span> ET Naturals</div>
+  </nav>
+
+  <script>
+  /* ====== CONFIG: Approved feed via Apps Script (JSONP) ====== */
+  const JSONP_URL_APPROVED =
+    'https://script.google.com/macros/s/AKfycbzJeoYfhWrpwWcae-ptGUHMKa0U-uFsdln7D2wuUrdmTyhyROCeNpyWO3_TBZ8jRvZI/exec?approved=1&fmt=jsonp&cb=ETN_mountApproved';
+
+  // Year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Modal open/close
+  (function(){
+    const modal   = document.getElementById('formModal');
+    const openBtn = document.getElementById('openFormBtn');
+    const closeBtn= document.getElementById('closeFormBtn');
+    const close2  = document.getElementById('closeFormBtn2');
+    function open(){ modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+    function close(){ modal.setAttribute('aria-hidden','true');  document.body.style.overflow=''; }
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    if (close2) close2.addEventListener('click', close);
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) close(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+  })();
+
+  /* ---------- Helpers ---------- */
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, m => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]
+    ));
+  }
+  function starHTML(n){
+    n = Number(n)||0; n = Math.max(1, Math.min(5, n));
+    return `<span class="on">${'★★★★★'.slice(0,n)}</span>${'★★★★★'.slice(n).replace(/./g,'☆')}`;
+  }
+// --- REPLACE normalizeImgUrl with this ---
+function normalizeImgUrl(u){
+  if (!u) return '';
+  u = String(u).trim();
+
+  // Try to pull a Drive file id out of the common formats
+  let id = null;
+  let m = u.match(/https?:\/\/drive\.google\.com\/file\/d\/([^/]+)/i);
+  if (m) id = m[1];
+  if (!id) { m = u.match(/[?&]id=([^&]+)/i); if (m) id = m[1]; }
+  if (!id) { m = u.match(/https?:\/\/drive\.google\.com\/uc\?[^#]*\bid=([^&]+)/i); if (m) id = m[1]; }
+
+  // If we found an id, prefer Drive's thumbnail endpoint (more reliable for <img>)
+  if (id) {
+    return 'https://drive.google.com/thumbnail?id=' + id + '&sz=w1200';
+  }
+
+  // Folder links can’t be embedded
+  if (/drive\.google\.com\/drive\/folders\//i.test(u)) return '';
+
+  // Otherwise, use the URL as-is
+  return u;
+}
+
+// --- REPLACE itemCardHTML with this ---
+function itemCardHTML(t){
+  const initial = (t.name||'?')[0]?.toUpperCase() || '?';
+
+  // accept several key names just in case
+  const raw = t.img || t.image_url || t.image || t.photo || '';
+  const u   = normalizeImgUrl(raw);
+
+  // Only render <img> when we have a usable URL; if it fails, drop it (no placeholder)
+  const photo = u
+    ? `<img class="review-photo" decoding="async" loading="lazy"
+             src="${escapeHTML(u)}"
+             alt="Customer photo"
+             onerror="this.remove()">`
+    : '';
+
+  return `
+    <article class="card t">
+      ${photo}
+      <div class="who">
+        <div class="avatar">${escapeHTML(initial)}</div>
+        <div>
+          <div><b>${escapeHTML(t.name || '')}</b> ${t.loc?`<span class="meta">${escapeHTML(t.loc)}</span>`:''}</div>
+          <div class="stars" aria-label="${t.rating} out of 5 stars">${starHTML(t.rating)}</div>
+        </div>
+      </div>
+      <p class="quote">“${escapeHTML(t.msg || '')}”</p>
+      <div class="meta">Used: Root Renewal</div>
+    </article>
+  `;
+}
+
+  // JSONP callback (must be global)
+  window.ETN_mountApproved = function(resp){
+    const mount = document.getElementById('approved');
+    if (!mount) return;
+    const items = (resp && resp.ok && Array.isArray(resp.items)) ? resp.items : [];
+    mount.innerHTML = items.length
+      ? items.map(itemCardHTML).join('')
+      : `<div class="muted">No approved testimonials yet.</div>`;
+  };
+
+  // Request Approved via JSONP (with cache-buster)
+  function fetchApprovedJSONP(){
+    const old = document.getElementById('approvedJsonpTag');
+    if (old) old.remove();
+    const s = document.createElement('script');
+    s.id  = 'approvedJsonpTag';
+    s.src = JSONP_URL_APPROVED + '&_cb=' + Date.now();
+    document.head.appendChild(s);
+  }
+  fetchApprovedJSONP();
+
+  /* ---------- Preview + after-submit tidy ---------- */
+  (function(){
+    const fileInput = document.getElementById('reviewPhoto');
+    const prev      = document.getElementById('photoPreview');
+    const sink      = document.getElementById('submitSink');
+    const modal     = document.getElementById('formModal');
+
+    fileInput?.addEventListener('change', () => {
+      const f = fileInput.files?.[0];
+      if (f) { prev.src = URL.createObjectURL(f); prev.style.display = 'block'; }
+      else   { prev.removeAttribute('src'); prev.style.display = 'none'; }
+    });
+
+    sink?.addEventListener('load', () => {
+      alert('Thanks! Your review was submitted.');
+      const form = document.getElementById('reviewForm');
+      form?.reset();
+      if (prev) { prev.removeAttribute('src'); prev.style.display = 'none'; }
+      if (modal) { modal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+      setTimeout(() => {
+        const mount = document.getElementById('approved');
+        if (mount) mount.innerHTML = '';
+        fetchApprovedJSONP();
+      }, 1000);
+    });
+  })();
+
+  // Optional: client IP
+  (function fillClientIp(){
+    const f = document.getElementById('clientIp');
+    if (!f) return;
+    fetch('https://api.ipify.org?format=json')
+      .then(r => r.json())
+      .then(d => { f.value = d.ip || ''; })
+      .catch(() => {});
+  })();
+  </script>
+</body>
+</html>

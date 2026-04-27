@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout — ET Naturals</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --bg:#0b0b0c; --card:#151618; --text:#f6f7f9; --muted:#9aa3ae; --stroke:#2a2d31; --accent:#52a5ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background:var(--bg); color:var(--text); }
+
+    /* Shared layout */
+    .container{ max-width:1100px; margin:0 auto; padding:20px; }
+    .logo-img{ display:block; height:60px; width:auto; }
+
+    /* Site header (right-aligned nav) */
+    .site-header{
+      position:sticky; top:0; z-index:1000;
+      background:var(--card);
+      border-bottom:1px solid var(--stroke);
+      backdrop-filter:saturate(120%) blur(6px);
+    }
+    .site-header .container{
+      display:flex; align-items:center; gap:16px;
+    }
+    .site-header .nav{
+      display:flex; flex-wrap:wrap; gap:14px;
+      margin-left:auto; justify-content:flex-end; text-align:right;
+    }
+    .site-header .nav a{
+      color:var(--text); font-weight:600; text-decoration:none;
+    }
+    .site-header .nav a:hover{ text-decoration:underline; }
+
+    /* Page-specific */
+    .wrap { max-width:720px; margin:32px auto; padding:20px; }
+    a { color:var(--accent); text-decoration:none; }
+    header { margin-bottom:12px; }
+    .card { background:var(--card); border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+    .row { display:grid; grid-template-columns:1fr; gap:18px; }
+    label { display:flex; flex-direction:column; gap:6px; font-size:14px; }
+    select, input[type="number"] {
+      background:#0f1012; border:1px solid var(--stroke); color:var(--text);
+      padding:10px 12px; border-radius:10px; font-size:15px;
+    }
+    .totals { font-size:15px; color:var(--muted); }
+
+    /* Payment row */
+    .paygrid{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:6px; }
+    #paypal-container{ flex:0 1 320px; min-width:320px; }
+    .payimg{ width:200px; max-width:200px; height:auto; border-radius:12px; border:1px solid #2a2d31; box-shadow:0 2px 8px rgba(0,0,0,.25); display:block; }
+    .paygrid a:focus-visible img, .paygrid a:hover img { outline:2px solid var(--accent); outline-offset:3px; }
+    @media (max-width:520px){ #paypal-container{ min-width:260px; } .payimg{ width:180px; max-width:180px; } }
+
+    .toast {
+      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+      background:#151618; color:#f6f7f9; border:1px solid var(--stroke);
+      padding:10px 14px; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.35);
+      font-size:14px; display:none; z-index:9999;
+    }
+
+    /* Footer nav */
+    .footer-nav{ max-width:720px; margin:24px auto 40px; padding:10px 20px; color:var(--muted); text-align:center; }
+    .footer-nav .links{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-bottom:6px; }
+    .footer-nav a{ color:var(--text); opacity:.9; }
+    .footer-nav a:hover{ opacity:1; text-decoration:underline; }
+    .footer-nav .legal{ font-size:12px; opacity:.75; }
+  </style>
+</head>
+<body>
+
+<!-- FULL-WIDTH STICKY HEADER -->
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="brand">
+      <img
+        src="images/et-naturals-logo.png"
+        alt="ET Naturals Logo"
+        class="logo-img"
+        onerror="this.onerror=null;this.src='images/logo.png'">
+    </a>
+    <nav class="nav">
+      <a href="index.html#shop">Order</a>
+      <a href="about.html">Our Story</a>
+      <a href="index.html#ingredients">Ingredients</a>
+      <a href="faq.html">FAQ</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Keep your existing page content below -->
+<div class="wrap">
+  <!-- ... the rest of your order page ... -->
+
+
+
+    <div class="card">
+      <h1 style="margin:0 0 10px 0;">Checkout</h1>
+
+      <div class="row">
+        <label>
+          Plan
+          <select id="plan">
+            <option value="onetime">One-Time — $19.99</option>
+            <option value="subscribe">Subscription — $14.99</option>
+            <option value="bundle">Bundle (3-Pack) — $54.99</option>
+          </select>
+        </label>
+
+        <label>
+          Quantity
+          <input id="qty" type="number" min="1" value="1" />
+        </label>
+
+        <div class="totals" id="totals">Total: $19.99</div>
+
+        <!-- Payment row -->
+        <div class="paygrid">
+          <!-- PayPal Hosted Button renders here -->
+          <div id="paypal-container"></div>
+
+          <!-- Venmo image/link -->
+          <a href="#" id="lnkVenmo" aria-label="Pay with Venmo">
+            <img class="payimg" src="images/venmo.png" alt="Pay with Venmo"
+                 onerror="this.onerror=null; this.src='venmo.png';">
+          </a>
+        </div>
+      </div>
+
+      <p class="totals" style="margin-top:10px;">Taxes &amp; shipping calculated in payment app.</p>
+    </div>
+    <nav class="footer-nav">
+  <div class="links">
+    <a href="index.html#shop">Shop</a>
+    <a href="about.html">About</a>
+    <a href="index.html#ingredients">Ingredients</a>
+    <a href="index.html#faq">FAQ</a>
+    <a href="order.html">Checkout</a>
+  </div>
+  <div class="legal">© <span id="year"></span> ET Naturals</div>
+</nav>
+
+  </div>
+
+  <div class="toast" id="toast">Coming soon.</div>
+
+  <!-- PayPal SDK (Hosted Buttons) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=BAAKoYuCKyWqy1Jy8Vf1kY4Ko_WokiJ5hGLAuWQkPZ2TGDxblPddJHUiuuj5jKgI-QMM37FFgejZi1LhJE&components=hosted-buttons&currency=USD"></script>
+
+  <script>
+  (function(){
+    // === CONFIG ===
+    const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+    const STORE_NAME = 'ET Naturals';
+    const VENMO_HANDLE = 'etnaturals'; // ✅ your Venmo username (no @)
+
+    // ✅ Your PayPal Hosted Button IDs
+    const BUTTON_IDS = {
+      subscribe: 'JHVUFW77DLZ62', // $14.99 subscription
+      onetime:   'P6L48JKW53W5J', // $19.99 one-time
+      bundle:    '6EXMRWBD9LCTQ'  // $54.99 bundle
+    };
+
+    // Elements
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const totEl  = document.getElementById('totals');
+    const venmoA = document.getElementById('lnkVenmo');
+    const container = document.getElementById('paypal-container');
+
+    // Helpers
+    const isMobile   = () => /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const planLabel  = (p) => p==='subscribe'?'Subscription':(p==='bundle'?'Bundle (3-Pack)':'One-Time');
+    const showToast  = (msg) => { const t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1800); };
+
+    function parseQueryPlan(){
+      const p = new URLSearchParams(location.search).get('plan');
+      if (p && ['onetime','subscribe','bundle'].includes(p)) planEl.value = p;
+    }
+
+    function calc(){
+      const plan = planEl.value || 'onetime';
+      const qty = Math.max(1, parseInt(qtyEl.value||'1',10));
+      const unit = PRICES[plan] ?? PRICES.onetime;
+      // Hosted buttons use amounts defined in PayPal; qty is for Venmo + display only
+      const total = +(unit * (plan==='subscribe' ? 1 : qty)).toFixed(2);
+      return { plan, qty, unit, total };
+    }
+
+    function updateTotals(){
+      const { total, qty, unit, plan } = calc();
+      totEl.textContent = `Total: $${total.toFixed(2)} (${qty} × $${unit.toFixed(2)})` + (plan==='subscribe'?' / 30 days':'');
+    }
+
+    function updateVenmo(){
+      const { plan, qty, total } = calc();
+      const label = `${STORE_NAME} — ${planLabel(plan)}${plan==='bundle'?'':(' ×'+qty)}`;
+      const amount = total.toFixed(2);
+      const note = encodeURIComponent(label);
+      const deep = `venmo://paycharge?txn=pay&recipients=${encodeURIComponent(VENMO_HANDLE)}&amount=${amount}&note=${note}`;
+      const web  = `https://venmo.com/${encodeURIComponent(VENMO_HANDLE)}?txn=pay&amount=${amount}&note=${note}`;
+      venmoA.href = isMobile() ? deep : web;
+    }
+
+    // Wait until PayPal SDK is ready, then render
+    function whenPayPalReady(cb, tries=25){
+      if (window.paypal && paypal.HostedButtons) return cb();
+      if (tries <= 0) return showToast('PayPal failed to load. Try refresh.');
+      setTimeout(()=>whenPayPalReady(cb, tries-1), 200);
+    }
+
+    function renderPayPal(){
+      const { plan } = calc();
+      const id = BUTTON_IDS[plan];
+
+      // Clear container and render for current plan
+      container.innerHTML = '';
+      whenPayPalReady(() => {
+        try{
+          paypal.HostedButtons({ hostedButtonId: id })
+                .render('#paypal-container')
+                .catch(err => { console.error('PayPal render error:', err); showToast('PayPal error — check console.'); });
+        }catch(e){
+          console.error('PayPal exception:', e);
+          showToast('PayPal error — check console.');
+        }
+      });
+    }
+
+    // Init
+    parseQueryPlan();
+    updateTotals();
+    updateVenmo();
+    renderPayPal();
+
+    // Events
+    planEl.addEventListener('change', () => { updateTotals(); updateVenmo(); renderPayPal(); });
+    qtyEl.addEventListener('input', () => { updateTotals(); updateVenmo(); });
+  })();
+  </script>
+  <script>
+(function(){
+  // Save the shopper's selection for the thank-you page
+  const PRICES = { onetime: 19.99, subscribe: 14.99, bundle: 54.99 };
+
+  function capture(){
+    const planEl = document.getElementById('plan');
+    const qtyEl  = document.getElementById('qty');
+    const plan = (planEl && planEl.value) || 'onetime';
+    const qty  = Math.max(1, parseInt((qtyEl && qtyEl.value) || '1', 10));
+    const unit = PRICES[plan] || PRICES.onetime;
+    const total = +(unit * (plan === 'subscribe' ? 1 : qty)).toFixed(2);
+    localStorage.setItem('etn_order', JSON.stringify({ plan, qty, unit, total, ts: new Date().toISOString() }));
+  }
+
+  // Save on load and whenever plan/qty changes
+  window.addEventListener('load', capture);
+  document.getElementById('plan')?.addEventListener('change', capture);
+  document.getElementById('qty')?.addEventListener('input', capture);
+})();
+</script>
+
+</body>
+</html>

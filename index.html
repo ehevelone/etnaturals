@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ET Naturals — Clean, Plant-Forward Essentials for Body & Home</title>
+  <meta name="description" content="ET Naturals creates small-batch, plant-forward essentials for body and home — from candles to body care and wax melts." />
+  <meta name="theme-color" content="#215033" />
+
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA;
+    }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; background:var(--beige); color:var(--ink);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto;
+    }
+    a{ color:var(--green); text-decoration:none }
+    img{ max-width:100%; display:block }
+
+    header{
+      position:sticky; top:0;
+      background:rgba(240,233,218,.95);
+      border-bottom:1px solid #0002;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+    }
+
+    .logo-img{ height:60px }
+
+    nav{
+      margin-left:auto;
+      display:flex;
+      gap:16px;
+      font-weight:600;
+    }
+
+    .hero{
+      display:grid;
+      gap:30px;
+      padding:60px 20px;
+    }
+
+    @media(min-width:900px){
+      .hero{
+        grid-template-columns:1fr 1fr;
+        align-items:center;
+      }
+    }
+
+    .card{
+      background:#ffffffcc;
+      border-radius:16px;
+      padding:24px;
+      border:1px solid #0002;
+      box-shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:42px;
+      margin:0 0 10px;
+      line-height:1.1;
+    }
+
+    .subtitle{
+      color:var(--brown);
+      margin-bottom:18px;
+      font-weight:600;
+    }
+
+    .btn{
+      padding:12px 20px;
+      border-radius:999px;
+      font-weight:800;
+      display:inline-block;
+    }
+
+    .btn-primary{
+      background:var(--green);
+      color:#fff;
+    }
+
+    .grid{
+      display:grid;
+      gap:20px;
+      padding:20px;
+    }
+
+    @media(min-width:900px){
+      .grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .product{
+      text-align:center;
+    }
+
+    .shot{
+      border-radius:14px;
+      overflow:hidden;
+      margin-bottom:12px;
+      border:1px solid #0002;
+    }
+
+    h2{
+      padding:0 20px;
+      font-family:"Playfair Display", serif;
+    }
+
+    footer{
+      text-align:center;
+      padding:20px;
+      border-top:1px solid #0002;
+      margin-top:40px;
+      color:#33473d;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <img src="images/et-naturals-logo.png" class="logo-img" alt="ET Naturals">
+    <nav>
+      <a href="#shop">Shop</a>
+      <a href="about.html">Our Philosophy</a>
+      <a href="faq.html">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+
+  <div class="card">
+    <h1 class="title">Simple Natural Essentials</h1>
+    <p class="subtitle">
+      Small-batch, handcrafted products for body and home — made with clean ingredients and simple purpose.
+    </p>
+
+    <a class="btn btn-primary" href="#shop">Shop Products</a>
+  </div>
+
+  <div class="card">
+    <img src="images/square-candle.jpg" alt="ET Naturals Candle">
+  </div>
+
+</section>
+
+<h2 id="shop">Shop</h2>
+
+<section class="grid">
+
+  <!-- Candles -->
+  <div class="product card">
+    <div class="shot">
+      <img src="images/square-candle.jpg" alt="Candles">
+    </div>
+    <h3>Candles</h3>
+    <p>Hand-poured candles in unique vessels and styles.</p>
+    <a class="btn btn-primary" href="candles.html">Shop Candles</a>
+  </div>
+
+  <!-- Body Care -->
+  <div class="product card">
+    <div class="shot">
+      <img src="images/body-butter.jpg" alt="Body Care">
+    </div>
+    <h3>Body Care</h3>
+    <p>Simple, effective products for everyday skin care.</p>
+    <a class="btn btn-primary" href="body.html">Shop Body Care</a>
+  </div>
+
+  <!-- Wax Melts -->
+  <div class="product card">
+    <div class="shot">
+      <img src="images/wax-melts.jpg" alt="Wax Melts">
+    </div>
+    <h3>Wax Melts</h3>
+    <p>Mix & match shapes and scents.</p>
+    <a class="btn btn-primary" href="melts.html">Shop Wax Melts</a>
+  </div>
+
+</section>
+
+<footer>
+  © <span id="year"></span> ET Naturals
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

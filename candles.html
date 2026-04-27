@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ET Naturals — Candles</title>
+  <meta name="description" content="Hand-poured candles from ET Naturals." />
+  <meta name="theme-color" content="#215033" />
+
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA;
+    }
+    *{ box-sizing:border-box }
+    body{
+      margin:0; background:var(--beige); color:var(--ink);
+      font-family: Inter, system-ui;
+    }
+    a{ text-decoration:none; color:var(--green) }
+    img{ max-width:100%; display:block }
+
+    header{
+      position:sticky; top:0;
+      background:rgba(240,233,218,.95);
+      border-bottom:1px solid #0002;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+    }
+
+    .logo-img{ height:60px }
+
+    nav{
+      margin-left:auto;
+      display:flex;
+      gap:16px;
+      font-weight:600;
+    }
+
+    .hero{
+      padding:50px 20px 20px;
+      text-align:center;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:40px;
+      margin-bottom:10px;
+    }
+
+    .subtitle{
+      color:var(--brown);
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      gap:20px;
+      padding:20px;
+    }
+
+    @media(min-width:900px){
+      .grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .card{
+      background:#ffffffcc;
+      border-radius:16px;
+      padding:20px;
+      border:1px solid #0002;
+      box-shadow:0 10px 25px rgba(0,0,0,.08);
+      text-align:center;
+    }
+
+    .shot{
+      border-radius:14px;
+      overflow:hidden;
+      margin-bottom:12px;
+      border:1px solid #0002;
+    }
+
+    .price{
+      font-size:22px;
+      font-weight:800;
+      color:var(--green);
+      margin:10px 0;
+    }
+
+    .btn{
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:800;
+      display:inline-block;
+      background:var(--green);
+      color:#fff;
+    }
+
+    footer{
+      text-align:center;
+      padding:20px;
+      border-top:1px solid #0002;
+      margin-top:40px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html">
+      <img src="images/et-naturals-logo.png" class="logo-img" alt="ET Naturals">
+    </a>
+    <nav>
+      <a href="index.html#shop">Shop</a>
+      <a href="about.html">Our Philosophy</a>
+      <a href="faq.html">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 class="title">Hand-Poured Candles</h1>
+  <p class="subtitle">
+    Clean-burning candles made in small batches using premium wax blends and unique vessels.
+  </p>
+</section>
+
+<section class="grid">
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/small-mason.jpg">
+    </div>
+    <h3>Classic Mason Candle</h3>
+    <div class="price">$20</div>
+    <a class="btn" href="order.html?sku=mason">Add to Cart</a>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/4oz-quilted.jpg">
+    </div>
+    <h3>Quilted Glass Candle</h3>
+    <div class="price">$14</div>
+    <a class="btn" href="order.html?sku=quilted">Add to Cart</a>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/4oz-tin.jpg">
+    </div>
+    <h3>Travel Tin Candle</h3>
+    <div class="price">$12</div>
+    <a class="btn" href="order.html?sku=tin">Add to Cart</a>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/square-candle.jpg">
+    </div>
+    <h3>Wood Wick Statement Candle</h3>
+    <div class="price">$39</div>
+    <a class="btn" href="order.html?sku=woodwick">Add to Cart</a>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/ceramic-special.jpg">
+    </div>
+    <h3>Ceramic Planter Candle</h3>
+    <div class="price">$39</div>
+    <a class="btn" href="order.html?sku=ceramic">Add to Cart</a>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/highland-cow.jpg">
+    </div>
+    <h3>Highland Cow Candle</h3>
+    <div class="price">$10</div>
+    <a class="btn" href="order.html?sku=cow">Add to Cart</a>
+  </div>
+
+</section>
+
+<footer>
+  © <span id="year"></span> ET Naturals
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

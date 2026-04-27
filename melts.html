@@ -1,0 +1,149 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ET Naturals — Wax Melts</title>
+  <meta name="description" content="Mix & match wax melts from ET Naturals." />
+  <meta name="theme-color" content="#215033" />
+
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA;
+    }
+
+    body{
+      margin:0; background:var(--beige); color:var(--ink);
+      font-family: Inter, system-ui;
+    }
+
+    header{
+      position:sticky; top:0;
+      background:rgba(240,233,218,.95);
+      border-bottom:1px solid #0002;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+    }
+
+    .logo-img{ height:60px }
+
+    nav{
+      margin-left:auto;
+      display:flex;
+      gap:16px;
+      font-weight:600;
+    }
+
+    .hero{
+      text-align:center;
+      padding:50px 20px 20px;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:40px;
+    }
+
+    .subtitle{
+      color:var(--brown);
+      font-weight:600;
+    }
+
+    .grid{
+      display:grid;
+      gap:20px;
+      padding:20px;
+    }
+
+    @media(min-width:900px){
+      .grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .card{
+      background:#ffffffcc;
+      border-radius:16px;
+      padding:20px;
+      border:1px solid #0002;
+      text-align:center;
+    }
+
+    .shot{
+      height:200px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#fff;
+      border-radius:14px;
+      margin-bottom:12px;
+    }
+
+    .shot img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .price{
+      font-size:22px;
+      font-weight:800;
+      color:var(--green);
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <a href="index.html">
+      <img src="images/et-naturals-logo.png" class="logo-img">
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="candles.html">Candles</a>
+      <a href="skincare.html">Body Care</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 class="title">Wax Melts</h1>
+  <p class="subtitle">Mix & match your favorite shapes and scents</p>
+</section>
+
+<section class="grid">
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/wax-melts.jpg">
+    </div>
+    <h3>Standard Melt Pieces</h3>
+    <div class="price">$0.50 each</div>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/highland-cow.jpg">
+    </div>
+    <h3>Highland Cow Melt</h3>
+    <div class="price">$1.50 each</div>
+  </div>
+
+</section>
+
+</body>
+</html>

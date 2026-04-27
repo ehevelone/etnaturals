@@ -1,0 +1,82 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ET Naturals — Body Care</title>
+
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+  <style>
+    body{
+      margin:0;
+      background:#F0E9DA;
+      font-family: Inter, system-ui;
+    }
+
+    .grid{
+      display:grid;
+      gap:20px;
+      padding:20px;
+    }
+
+    @media(min-width:900px){
+      .grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .card{
+      background:#fff;
+      padding:20px;
+      border-radius:12px;
+      text-align:center;
+    }
+
+    .shot{
+      height:200px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .shot img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .price{
+      font-weight:bold;
+      color:#215033;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<h1 style="text-align:center;">Body Care</h1>
+
+<section class="grid">
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/body-butter.jpg">
+    </div>
+    <h3>Body Butter</h3>
+    <div class="price">$??</div>
+  </div>
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/hyaluronic-acid.jpg">
+    </div>
+    <h3>Hyaluronic Cream</h3>
+    <div class="price">$??</div>
+  </div>
+
+</section>
+
+</body>
+</html>

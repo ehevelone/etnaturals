@@ -82,11 +82,26 @@
       text-align:center;
     }
 
+    /* 🔥 FIXED IMAGE SIZE */
     .shot{
+      width:100%;
+      height:200px;
       border-radius:14px;
       overflow:hidden;
       margin-bottom:12px;
       border:1px solid #0002;
+      background:#fff;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .shot img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      background:#fff;
     }
 
     .price{
@@ -110,6 +125,12 @@
       padding:20px;
       border-top:1px solid #0002;
       margin-top:40px;
+    }
+
+    h2{
+      text-align:center;
+      margin-top:30px;
+      font-family:"Playfair Display", serif;
     }
   </style>
 </head>
@@ -137,6 +158,7 @@
   </p>
 </section>
 
+<!-- CANDLES -->
 <section class="grid">
 
   <div class="card">
@@ -184,13 +206,29 @@
     <a class="btn" href="order.html?sku=ceramic">Add to Cart</a>
   </div>
 
+</section>
+
+<!-- MELTS -->
+<h2>Wax Melts</h2>
+
+<section class="grid">
+
+  <div class="card">
+    <div class="shot">
+      <img src="images/wax-melts.jpg">
+    </div>
+    <h3>Wax Melt Pieces</h3>
+    <p>Mix & match shapes and scents</p>
+    <div class="price">$0.50 each</div>
+  </div>
+
   <div class="card">
     <div class="shot">
       <img src="images/highland-cow.jpg">
     </div>
-    <h3>Highland Cow Candle</h3>
-    <div class="price">$10</div>
-    <a class="btn" href="order.html?sku=cow">Add to Cart</a>
+    <h3>Highland Cow Melt</h3>
+    <p>Large novelty melt</p>
+    <div class="price">$1.50 each</div>
   </div>
 
 </section>

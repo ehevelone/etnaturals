@@ -1,17 +1,70 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>ET Naturals — Body Care</title>
+  <meta name="description" content="Simple, effective body care from ET Naturals." />
+  <meta name="theme-color" content="#215033" />
 
   <link rel="icon" type="image/png" href="images/favicon.png">
 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
   <style>
+    :root{
+      --green:#215033; --brown:#6b4b3e; --ink:#0e1a14; --beige:#F0E9DA;
+    }
+
+    *{ box-sizing:border-box }
+
     body{
       margin:0;
-      background:#F0E9DA;
+      background:var(--beige);
+      color:var(--ink);
       font-family: Inter, system-ui;
+    }
+
+    a{ text-decoration:none; color:var(--green) }
+    img{ max-width:100%; display:block }
+
+    header{
+      position:sticky;
+      top:0;
+      background:rgba(240,233,218,.95);
+      border-bottom:1px solid #0002;
+    }
+
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+    }
+
+    .logo-img{ height:60px }
+
+    nav{
+      margin-left:auto;
+      display:flex;
+      gap:16px;
+      font-weight:600;
+    }
+
+    .hero{
+      padding:50px 20px 20px;
+      text-align:center;
+    }
+
+    .title{
+      font-family:"Playfair Display", serif;
+      font-size:40px;
+      margin-bottom:10px;
+    }
+
+    .subtitle{
+      color:var(--brown);
+      font-weight:600;
     }
 
     .grid{
@@ -27,9 +80,11 @@
     }
 
     .card{
-      background:#fff;
+      background:#ffffffcc;
       padding:20px;
-      border-radius:12px;
+      border-radius:16px;
+      border:1px solid #0002;
+      box-shadow:0 10px 25px rgba(0,0,0,.08);
       text-align:center;
     }
 
@@ -38,6 +93,10 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      background:#fff;
+      border-radius:14px;
+      margin-bottom:12px;
+      border:1px solid #0002;
     }
 
     .shot img{
@@ -47,8 +106,30 @@
     }
 
     .price{
-      font-weight:bold;
-      color:#215033;
+      font-size:20px;
+      font-weight:800;
+      color:var(--green);
+      margin-top:8px;
+    }
+
+    .desc{
+      font-size:14px;
+      color:#33473d;
+      margin:8px 0;
+    }
+
+    .subnote{
+      font-size:13px;
+      color:#6b4b3e;
+      margin-top:4px;
+    }
+
+    footer{
+      text-align:center;
+      padding:20px;
+      border-top:1px solid #0002;
+      margin-top:40px;
+      background:#ffffffaa;
     }
   </style>
 
@@ -56,7 +137,27 @@
 
 <body>
 
-<h1 style="text-align:center;">Body Care</h1>
+<header>
+  <div class="container">
+    <a href="index.html">
+      <img src="images/et-naturals-logo.png" class="logo-img" alt="ET Naturals">
+    </a>
+    <nav>
+      <a href="index.html#shop">Shop</a>
+      <a href="candles.html">Candles</a>
+      <a href="melts.html">Wax Melts</a>
+      <a href="faq.html">FAQ</a>
+      <a href="order.html">Checkout</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <h1 class="title">Body Care</h1>
+  <p class="subtitle">
+    Simple, effective skincare made with clean, plant-forward ingredients.
+  </p>
+</section>
 
 <section class="grid">
 
@@ -64,7 +165,17 @@
     <div class="shot">
       <img src="images/body-butter.jpg">
     </div>
-    <h3>Body Butter</h3>
+    <h3>Pure Earth Body Butter</h3>
+
+    <p class="desc">
+      Deeply moisturizing, small-batch body butter made with rich plant-based oils and butters.
+      Designed to absorb cleanly while leaving skin soft, smooth, and hydrated all day.
+    </p>
+
+    <p class="subnote">
+      Ideal for dry skin, daily use, and post-shower hydration.
+    </p>
+
     <div class="price">$??</div>
   </div>
 
@@ -72,11 +183,29 @@
     <div class="shot">
       <img src="images/hyaluronic-acid.jpg">
     </div>
-    <h3>Hyaluronic Cream</h3>
+    <h3>Hyaluronic Moisture Cream</h3>
+
+    <p class="desc">
+      Lightweight daily moisturizer formulated with hyaluronic acid to help retain moisture
+      and support healthy, hydrated skin without a heavy or greasy feel.
+    </p>
+
+    <p class="subnote">
+      Perfect for daily facial use and lightweight hydration.
+    </p>
+
     <div class="price">$??</div>
   </div>
 
 </section>
+
+<footer>
+  © <span id="year"></span> ET Naturals
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 
 </body>
 </html>

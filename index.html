@@ -157,40 +157,32 @@
       text-align:center;
     }
 
+    /* 🔥 FIXED IMAGE DISPLAY */
     .shot{
       width:100%;
-      height:220px;
+      height:260px;
       border-radius:14px;
       overflow:hidden;
       margin-bottom:12px;
       border:1px solid #0002;
       background:#fff;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .shot img{
       width:100%;
       height:100%;
-      object-fit:cover;
-      object-position:center;
-    }
-
-    .product:nth-child(1) .shot img{
-      object-position:center 35%;
-    }
-
-    .product:nth-child(2) .shot img{
-      object-position:center 55%;
-    }
-
-    .product:nth-child(3) .shot img{
-      object-position:center;
+      object-fit:contain;
+      background:#fff;
     }
 
     .hero .card img{
       width:100%;
       max-height:420px;
       object-fit:cover;
-      object-position:center;
       border-radius:14px;
     }
 
